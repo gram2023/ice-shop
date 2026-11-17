@@ -6,6 +6,7 @@ import { useCartLines, useLastOrder } from "@/lib/cart-store";
 import type { Product } from "@/lib/data";
 import { formatPrice } from "@/lib/format";
 import { calculateTotals, lineTotal } from "@/lib/order-rules";
+import type { ShopSettings } from "@/lib/settings";
 import OrderTotals, { FreeShippingHint } from "../cart/OrderTotals";
 import { CartIcon } from "../icons";
 import SectionMessage from "../SectionMessage";
@@ -14,10 +15,10 @@ import OrderSuccess from "./OrderSuccess";
 
 type Props = {
   products: Product[];
-  deliveryFee: number;
+  settings: ShopSettings;
 };
 
-export default function CheckoutView({ products, deliveryFee }: Props) {
+export default function CheckoutView({ products, settings }: Props) {
   const lines = useCartLines();
   const lastOrder = useLastOrder();
 
@@ -25,7 +26,11 @@ export default function CheckoutView({ products, deliveryFee }: Props) {
 
   // ตะกร้าว่าง: ถ้าเพิ่งสั่งซื้อสำเร็จในแท็บนี้ แสดงสรุปออเดอร์ ไม่งั้นแสดงหน้าตะกร้าว่าง
   if (lines.length === 0) {
-    return lastOrder ? <OrderSuccess order={lastOrder} /> : <EmptyCheckout />;
+    return lastOrder ? (
+      <OrderSuccess order={lastOrder} payment={settings.payment} />
+    ) : (
+      <EmptyCheckout />
+    );
   }
 
   const { available, unavailableCount } = matchCart(lines, products);
@@ -47,7 +52,8 @@ export default function CheckoutView({ products, deliveryFee }: Props) {
 
   const totals = calculateTotals(
     available.map((r) => ({ price: r.product.price, quantity: r.line.quantity })),
-    deliveryFee,
+    settings.deliveryFee,
+    settings.freeShippingMinQty,
   );
 
   return (
@@ -83,7 +89,10 @@ export default function CheckoutView({ products, deliveryFee }: Props) {
             </li>
           ))}
         </ul>
-        <FreeShippingHint remaining={totals.remainingForFreeShipping} />
+        <FreeShippingHint
+          remaining={totals.remainingForFreeShipping}
+          minQty={settings.freeShippingMinQty}
+        />
         <OrderTotals {...totals} />
       </aside>
 

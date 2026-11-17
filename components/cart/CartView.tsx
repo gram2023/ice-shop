@@ -10,6 +10,7 @@ import { matchCart } from "@/lib/cart";
 import type { Product } from "@/lib/data";
 import { formatPrice } from "@/lib/format";
 import { calculateTotals, lineTotal } from "@/lib/order-rules";
+import type { ShopSettings } from "@/lib/settings";
 import { CartIcon, TrashIcon } from "../icons";
 import ProductImage from "../ProductImage";
 import SectionMessage from "../SectionMessage";
@@ -18,7 +19,7 @@ import QuantityStepper from "./QuantityStepper";
 
 type Props = {
   products: Product[];
-  deliveryFee: number;
+  settings: ShopSettings;
 };
 
 const SUMMARY_HEADING_ID = "cart-summary-heading";
@@ -26,7 +27,7 @@ const SUMMARY_HEADING_ID = "cart-summary-heading";
 const primaryButton =
   "flex h-14 w-full items-center justify-center rounded-full bg-blue-600 px-6 text-lg font-bold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
 
-export default function CartView({ products, deliveryFee }: Props) {
+export default function CartView({ products, settings }: Props) {
   const lines = useCartLines();
 
   if (lines === null) return <CartSkeleton />;
@@ -35,7 +36,8 @@ export default function CartView({ products, deliveryFee }: Props) {
   const { rows, available, unavailableCount } = matchCart(lines, products);
   const totals = calculateTotals(
     available.map((r) => ({ price: r.product.price, quantity: r.line.quantity })),
-    deliveryFee,
+    settings.deliveryFee,
+    settings.freeShippingMinQty,
   );
 
   return (
@@ -126,7 +128,10 @@ export default function CartView({ products, deliveryFee }: Props) {
         >
           สรุปยอด
         </h2>
-        <FreeShippingHint remaining={totals.remainingForFreeShipping} />
+        <FreeShippingHint
+          remaining={totals.remainingForFreeShipping}
+          minQty={settings.freeShippingMinQty}
+        />
         <OrderTotals {...totals} />
         {unavailableCount > 0 || available.length === 0 ? (
           <p className="text-sm font-medium text-amber-800">

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import AdminAccessMessage from "@/components/admin/AdminAccessMessage";
+import { guardAdmin } from "@/components/admin/admin-guard";
 import AdminHeader from "@/components/admin/AdminHeader";
 import {
   OrderListCard,
@@ -11,13 +10,7 @@ import {
   Pagination,
 } from "@/components/admin/OrderList";
 import SectionMessage from "@/components/SectionMessage";
-import { getAdminSession } from "@/lib/admin/auth";
-import {
-  countOrdersByStatus,
-  getLatestOrderCreatedAt,
-  listOrders,
-  ORDERS_PAGE_SIZE,
-} from "@/lib/admin/orders";
+import { countOrdersByStatus, listOrders, ORDERS_PAGE_SIZE } from "@/lib/admin/orders";
 import { isOrderStatus, STATUS_LABELS, type OrderStatus } from "@/lib/order-status";
 
 export const metadata: Metadata = {
@@ -31,9 +24,8 @@ function first(value: string | string[] | undefined) {
 }
 
 async function OrdersContent({ searchParams }: { searchParams: SearchParams }) {
-  const session = await getAdminSession();
-  if (session.status === "anonymous") redirect("/admin/login");
-  if (session.status !== "admin") return <AdminAccessMessage session={session} />;
+  const gate = await guardAdmin();
+  if (!gate.ok) return gate.view;
 
   const params = await searchParams;
   const rawStatus = first(params.status);
@@ -41,14 +33,10 @@ async function OrdersContent({ searchParams }: { searchParams: SearchParams }) {
   const search = (first(params.q) ?? "").trim().slice(0, 50);
   const page = Math.min(1000, Math.max(1, Number.parseInt(first(params.page) ?? "1", 10) || 1));
 
-  const [list, counts, latest] = await Promise.all([
+  const [list, counts] = await Promise.all([
     listOrders({ status, search, page }),
     countOrdersByStatus(),
-    getLatestOrderCreatedAt(),
   ]);
-
-  // ยังไม่มีออเดอร์เลย → นับออเดอร์ใหม่ตั้งแต่ตอนนี้
-  const since = latest.ok && latest.data ? latest.data : new Date().toISOString();
 
   const makeHref = (p: number) => {
     const query = new URLSearchParams(search ? { q: search } : { status });
@@ -58,7 +46,7 @@ async function OrdersContent({ searchParams }: { searchParams: SearchParams }) {
 
   return (
     <>
-      <AdminHeader email={session.email} newOrdersSince={since} />
+      <AdminHeader email={gate.email} newOrdersSince={gate.newOrdersSince} />
       <main className="mx-auto w-full max-w-5xl flex-1 space-y-4 px-4 py-6">
         <h1 className="text-2xl font-bold text-slate-900">ออเดอร์</h1>
         <OrderSearch defaultValue={search} />

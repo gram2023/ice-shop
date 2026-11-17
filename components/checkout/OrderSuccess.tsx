@@ -7,12 +7,19 @@ import { formatDeliveryAt } from "@/lib/delivery";
 import { formatPrice } from "@/lib/format";
 import { paymentMethodLabel } from "@/lib/order-rules";
 import type { OrderSummary } from "@/lib/order-summary";
+import type { PaymentInfo } from "@/lib/settings";
 import { shopConfig } from "@/lib/shop-config";
 import OrderTotals from "../cart/OrderTotals";
 import { ChatIcon, CheckIcon } from "../icons";
 
-/** หน้าแสดงผลหลังสั่งซื้อสำเร็จ */
-export default function OrderSuccess({ order }: { order: OrderSummary }) {
+/** หน้าแสดงผลหลังสั่งซื้อสำเร็จ (payment = ข้อมูลชำระเงินที่แอดมินตั้งไว้) */
+export default function OrderSuccess({
+  order,
+  payment,
+}: {
+  order: OrderSummary;
+  payment: PaymentInfo;
+}) {
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   // ย้ายโฟกัสมาที่หัวข้อ เพื่อให้โปรแกรมอ่านหน้าจออ่านว่าสั่งซื้อสำเร็จ
@@ -40,7 +47,7 @@ export default function OrderSuccess({ order }: { order: OrderSummary }) {
         <p className="mt-1 text-sm text-slate-500">กรุณาจดหรือแคปหน้าจอนี้ไว้</p>
       </div>
 
-      <PaymentInstructions order={order} />
+      <PaymentInstructions order={order} payment={payment} />
 
       <div className="space-y-4 rounded-2xl border border-sky-100 bg-white p-5">
         <h3 className="text-lg font-bold text-blue-950">รายละเอียดคำสั่งซื้อ</h3>
@@ -96,8 +103,13 @@ export default function OrderSuccess({ order }: { order: OrderSummary }) {
   );
 }
 
-function PaymentInstructions({ order }: { order: OrderSummary }) {
-  const { payment } = shopConfig;
+function PaymentInstructions({
+  order,
+  payment,
+}: {
+  order: OrderSummary;
+  payment: PaymentInfo;
+}) {
   const amount = formatPrice(order.total);
 
   if (order.paymentMethod === "cod") {
@@ -117,7 +129,7 @@ function PaymentInstructions({ order }: { order: OrderSummary }) {
   // ร้านใส่ข้อมูลชำระเงินจริงไว้แล้วหรือยัง (ยังไม่ใส่ = ให้ลูกค้าทัก LINE ขอแทน)
   const ready = isTransfer
     ? Boolean(payment.accountNumber)
-    : Boolean(payment.promptPayId || payment.promptPayQrImage);
+    : Boolean(payment.promptPayId || payment.promptPayQrUrl);
 
   return (
     <div className="space-y-4 rounded-2xl border border-sky-100 bg-sky-50 p-5">
@@ -155,13 +167,15 @@ function PaymentInstructions({ order }: { order: OrderSummary }) {
 
       {ready && !isTransfer && (
         <div className="rounded-xl bg-white p-4 text-center">
-          {payment.promptPayQrImage && (
+          {payment.promptPayQrUrl && (
+            // unoptimized: แสดงไฟล์ต้นฉบับ ไม่ให้การบีบอัดรูปทำให้ QR สแกนยาก
             <Image
-              src={payment.promptPayQrImage}
+              src={payment.promptPayQrUrl}
               alt={`QR พร้อมเพย์${payment.accountName ? ` ${payment.accountName}` : ""}`}
-              width={220}
-              height={220}
-              className="mx-auto"
+              width={240}
+              height={240}
+              unoptimized
+              className="mx-auto h-auto w-60 max-w-full"
             />
           )}
           {payment.promptPayId && (

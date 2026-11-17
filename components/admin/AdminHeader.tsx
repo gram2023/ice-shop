@@ -2,6 +2,7 @@ import Link from "next/link";
 import { signOut } from "@/app/admin/actions";
 import { shopConfig } from "@/lib/shop-config";
 import { IceIcon } from "../icons";
+import AdminNav from "./AdminNav";
 import NewOrderWatcher from "./NewOrderWatcher";
 
 type Props = {
@@ -40,6 +41,7 @@ export default function AdminHeader({ email, newOrdersSince }: Props) {
           </form>
         </div>
       </div>
+      <AdminNav />
       {newOrdersSince && <NewOrderWatcher since={newOrdersSince} />}
     </header>
   );

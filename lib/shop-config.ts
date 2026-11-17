@@ -79,39 +79,17 @@ export const shopConfig = {
     { label: "อาทิตย์", days: [0], open: "07:00", close: "12:00" },
   ] satisfies OpeningHour[],
 
-  /** กฎการสั่งซื้อ */
+  /**
+   * กฎการสั่งซื้อ
+   * (ค่าส่ง จำนวนถุงส่งฟรี และข้อมูลชำระเงิน ย้ายไปอยู่ในฐานข้อมูลแล้ว แก้ได้ที่ /admin/settings)
+   */
   orderRules: {
-    /** สั่งครบกี่ถุงส่งฟรี ⚠️ ต้องตรงกับ c_free_shipping_min_qty ใน supabase/place_order.sql */
-    freeShippingMinQty: 10,
     /** ต้องสั่งล่วงหน้าอย่างน้อยกี่นาที */
     deliveryLeadMinutes: 60,
     /** เลือกวันจัดส่งล่วงหน้าได้ไม่เกินกี่วัน ⚠️ ต้องตรงกับ c_max_delivery_days ใน supabase/place_order.sql */
     deliveryMaxDays: 7,
     /** เวลาจัดส่งให้เลือกทุก ๆ กี่นาที */
     deliverySlotMinutes: 30,
-  },
-
-  /**
-   * ข้อมูลการชำระเงิน แสดงหลังลูกค้าสั่งซื้อสำเร็จ
-   *
-   * ตอนนี้ยังไม่ได้ตั้งค่า (null) หน้าเว็บจะแจ้งลูกค้าว่า "ร้านจะส่งเลขบัญชี/QR ให้ทาง LINE"
-   * ใส่ข้อมูลจริงเมื่อไหร่ หน้าเว็บจะแสดงเลขบัญชี/พร้อมเพย์ให้เอง
-   * (แผน: ย้ายไปให้แอดมินแก้ผ่านหน้าแอดมินในเฟสถัดไป)
-   */
-  payment: {
-    /** ชื่อธนาคาร เช่น "ธนาคารกสิกรไทย" */
-    bankName: null as string | null,
-    /** ชื่อบัญชี (ใช้ทั้งบัญชีธนาคารและพร้อมเพย์) */
-    accountName: null as string | null,
-    /** เลขที่บัญชี เช่น "123-4-56789-0" (null = ยังไม่เปิดให้แสดงเลขบัญชี) */
-    accountNumber: null as string | null,
-    /** เบอร์หรือเลขพร้อมเพย์ */
-    promptPayId: null as string | null,
-    /**
-     * รูป QR พร้อมเพย์: วางไฟล์รูปในโฟลเดอร์ public เช่น public/promptpay-qr.png
-     * แล้วใส่ "/promptpay-qr.png" ตรงนี้
-     */
-    promptPayQrImage: null as string | null,
   },
 
   /**

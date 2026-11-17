@@ -1,4 +1,5 @@
 import { unstable_rethrow } from "next/navigation";
+import { mapSettingsRow, SETTINGS_COLUMNS, type ShopSettings } from "@/lib/settings";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -77,43 +78,43 @@ export async function getPromoText(): Promise<Result<string | null>> {
 }
 
 /** ค่าส่งพื้นฐานจากตาราง settings (ก่อนหักส่งฟรี) */
-export async function getDeliveryFee(): Promise<Result<number>> {
+/** การตั้งค่าร้าน: ค่าส่ง / จำนวนถุงส่งฟรี / ข้อมูลชำระเงิน (ตาราง settings แถว id = 1) */
+export async function getShopSettings(): Promise<Result<ShopSettings>> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("settings")
-      .select("delivery_fee")
+      .select(SETTINGS_COLUMNS)
       .eq("id", 1)
       .maybeSingle();
 
     if (error) {
-      console.error("[getDeliveryFee]", error.message);
+      console.error("[getShopSettings]", error.message);
       return { ok: false };
     }
 
-    const fee = Number(data?.delivery_fee ?? 0);
-    return { ok: true, data: Number.isFinite(fee) && fee >= 0 ? fee : 0 };
+    return { ok: true, data: mapSettingsRow(data as Record<string, unknown> | null) };
   } catch (err) {
     unstable_rethrow(err);
-    console.error("[getDeliveryFee]", err);
+    console.error("[getShopSettings]", err);
     return { ok: false };
   }
 }
 
 export type OrderingData = {
   products: Product[];
-  deliveryFee: number;
+  settings: ShopSettings;
 };
 
-/** ข้อมูลที่หน้าตะกร้าและหน้าสั่งซื้อต้องใช้ (สินค้า + ค่าส่ง) */
+/** ข้อมูลที่หน้าตะกร้าและหน้าสั่งซื้อต้องใช้ (สินค้า + การตั้งค่าร้าน) */
 export async function getOrderingData(): Promise<Result<OrderingData>> {
-  const [products, deliveryFee] = await Promise.all([
+  const [products, settings] = await Promise.all([
     getActiveProducts(),
-    getDeliveryFee(),
+    getShopSettings(),
   ]);
-  if (!products.ok || !deliveryFee.ok) return { ok: false };
+  if (!products.ok || !settings.ok) return { ok: false };
   return {
     ok: true,
-    data: { products: products.data, deliveryFee: deliveryFee.data },
+    data: { products: products.data, settings: settings.data },
   };
 }

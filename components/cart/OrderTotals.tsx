@@ -1,5 +1,4 @@
 import { formatPrice } from "@/lib/format";
-import { shopConfig } from "@/lib/shop-config";
 
 type Props = {
   totalQuantity: number;
@@ -41,12 +40,19 @@ export default function OrderTotals({
   );
 }
 
-/** ข้อความ "สั่งเพิ่มอีก N ถุง ส่งฟรี" */
-export function FreeShippingHint({ remaining }: { remaining: number }) {
+/** ข้อความ "สั่งเพิ่มอีก N ถุง ส่งฟรี" (ไม่แสดงถ้าร้านไม่มีโปรส่งฟรี) */
+export function FreeShippingHint({
+  remaining,
+  minQty,
+}: {
+  remaining: number | null;
+  minQty: number;
+}) {
+  if (remaining === null) return null;
   if (remaining <= 0) {
     return (
       <p className="rounded-xl bg-green-50 px-3 py-2 text-sm font-medium text-green-800">
-        ✓ ได้รับสิทธิ์ส่งฟรี (สั่งครบ {shopConfig.orderRules.freeShippingMinQty} ถุง)
+        ✓ ได้รับสิทธิ์ส่งฟรี (สั่งครบ {minQty} ถุง)
       </p>
     );
   }

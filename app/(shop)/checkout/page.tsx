@@ -25,7 +25,7 @@ async function CheckoutLoader() {
   return (
     <CheckoutView
       products={result.data.products}
-      deliveryFee={result.data.deliveryFee}
+      settings={result.data.settings}
     />
   );
 }

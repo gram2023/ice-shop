@@ -5,6 +5,7 @@ import { ArrowRightIcon } from "@/components/icons";
 import ProductOrderList, {
   ProductOrderListSkeleton,
 } from "@/components/ProductOrderList";
+import { getShopSettings } from "@/lib/data";
 import { shopConfig } from "@/lib/shop-config";
 
 export const metadata: Metadata = {
@@ -12,13 +13,22 @@ export const metadata: Metadata = {
   description: `เลือกซื้อน้ำแข็งจาก ${shopConfig.name} สั่งออนไลน์ ส่งถึงที่`,
 };
 
+/** "· สั่งครบ N ถุง ส่งฟรี" จากการตั้งค่าร้าน (ไม่แสดงถ้าไม่มีโปรส่งฟรีหรือโหลดไม่ได้) */
+async function FreeShippingNote() {
+  const settings = await getShopSettings();
+  if (!settings.ok || settings.data.freeShippingMinQty <= 0) return null;
+  return <> · สั่งครบ {settings.data.freeShippingMinQty} ถุง ส่งฟรี</>;
+}
+
 export default function ProductsPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14">
       <h1 className="text-3xl font-bold text-blue-950 sm:text-4xl">สินค้า</h1>
       <p className="mt-2 text-lg text-slate-600">
-        เลือกจำนวนแล้วกด “ใส่ตะกร้า” · สั่งครบ{" "}
-        {shopConfig.orderRules.freeShippingMinQty} ถุง ส่งฟรี
+        เลือกจำนวนแล้วกด “ใส่ตะกร้า”
+        <Suspense fallback={null}>
+          <FreeShippingNote />
+        </Suspense>
       </p>
 
       <div className="mt-6">

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
-import AdminAccessMessage from "@/components/admin/AdminAccessMessage";
+import { guardAdmin } from "@/components/admin/admin-guard";
 import AdminHeader from "@/components/admin/AdminHeader";
 import PaymentToggle from "@/components/admin/PaymentToggle";
 import StatusActions from "@/components/admin/StatusActions";
@@ -10,13 +9,8 @@ import { PaymentBadge, StatusBadge } from "@/components/admin/StatusBadge";
 import OrderTotals from "@/components/cart/OrderTotals";
 import { PhoneIcon } from "@/components/icons";
 import SectionMessage from "@/components/SectionMessage";
-import { getAdminSession } from "@/lib/admin/auth";
 import { formatPhone, formatShortDateTime } from "@/lib/admin/format";
-import {
-  getLatestOrderCreatedAt,
-  getOrder,
-  type AdminOrderDetail,
-} from "@/lib/admin/orders";
+import { getOrder, type AdminOrderDetail } from "@/lib/admin/orders";
 import { formatDeliveryAt } from "@/lib/delivery";
 import { formatPrice } from "@/lib/format";
 import { paymentMethodLabel } from "@/lib/order-rules";
@@ -48,17 +42,15 @@ function BackLink() {
 }
 
 async function OrderDetailContent({ params }: { params: Params }) {
-  const session = await getAdminSession();
-  if (session.status === "anonymous") redirect("/admin/login");
-  if (session.status !== "admin") return <AdminAccessMessage session={session} />;
+  const gate = await guardAdmin();
+  if (!gate.ok) return gate.view;
 
   const { id } = await params;
-  const [result, latest] = await Promise.all([getOrder(id), getLatestOrderCreatedAt()]);
-  const since = latest.ok && latest.data ? latest.data : new Date().toISOString();
+  const result = await getOrder(id);
 
   return (
     <>
-      <AdminHeader email={session.email} newOrdersSince={since} />
+      <AdminHeader email={gate.email} newOrdersSince={gate.newOrdersSince} />
       <main className="mx-auto w-full max-w-3xl flex-1 space-y-4 px-4 py-4">
         <BackLink />
         {!result.ok ? (

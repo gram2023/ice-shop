@@ -1,5 +1,3 @@
-import { shopConfig } from "./shop-config";
-
 /**
  * กฎการสั่งซื้อที่ใช้ร่วมกันทั้งฝั่งเบราว์เซอร์และฝั่ง server
  *
@@ -69,21 +67,25 @@ export type Totals = {
   deliveryFee: number;
   total: number;
   freeShipping: boolean;
-  /** ต้องสั่งเพิ่มอีกกี่ถุงถึงจะส่งฟรี (0 = ส่งฟรีแล้ว) */
-  remainingForFreeShipping: number;
+  /** ต้องสั่งเพิ่มอีกกี่ถุงถึงจะส่งฟรี (0 = ส่งฟรีแล้ว, null = ร้านไม่มีโปรส่งฟรี) */
+  remainingForFreeShipping: number | null;
 };
 
-/** คำนวณยอดเงิน (ใช้แสดงผลเท่านั้น ยอดจริงคำนวณในฐานข้อมูลตอนสั่งซื้อ) */
+/**
+ * คำนวณยอดเงิน (ใช้แสดงผลเท่านั้น ยอดจริงคำนวณในฟังก์ชัน place_order ตอนสั่งซื้อ)
+ * freeShippingMinQty มาจากตาราง settings (0 = ไม่มีส่งฟรี) กติกาเดียวกับใน place_order
+ */
 export function calculateTotals(
   lines: { price: number; quantity: number }[],
   baseDeliveryFee: number,
+  freeShippingMinQty: number,
 ): Totals {
-  const minQty = shopConfig.orderRules.freeShippingMinQty;
+  const hasFreeShipping = freeShippingMinQty > 0;
   const totalQuantity = lines.reduce((sum, l) => sum + l.quantity, 0);
   const subtotal = roundMoney(
     lines.reduce((sum, l) => sum + l.price * l.quantity, 0),
   );
-  const freeShipping = totalQuantity >= minQty;
+  const freeShipping = hasFreeShipping && totalQuantity >= freeShippingMinQty;
   const deliveryFee = freeShipping ? 0 : baseDeliveryFee;
 
   return {
@@ -92,6 +94,8 @@ export function calculateTotals(
     deliveryFee,
     total: roundMoney(subtotal + deliveryFee),
     freeShipping,
-    remainingForFreeShipping: Math.max(0, minQty - totalQuantity),
+    remainingForFreeShipping: hasFreeShipping
+      ? Math.max(0, freeShippingMinQty - totalQuantity)
+      : null,
   };
 }

@@ -1,6 +1,7 @@
--- Ice Express: ฟังก์ชันรับคำสั่งซื้อจากลูกค้า (เฟส 2)
+-- Ice Express: ฟังก์ชันรับคำสั่งซื้อจากลูกค้า (เฟส 2, ปรับปรุงเฟส 4)
 -- วิธีใช้: เปิด Supabase > SQL Editor > วางทั้งไฟล์ > กด Run
--- รันซ้ำได้ (create or replace) และไม่แก้โครงสร้างตารางเดิมใน schema.sql
+-- รันซ้ำได้ (create or replace)
+-- ⚠️ ต้องรัน phase4.sql ก่อน (ฟังก์ชันนี้อ่านช่อง settings.free_shipping_min_qty)
 --
 -- ทำไมต้องมีฟังก์ชันนี้
 --   RLS ของตาราง orders / order_items อนุญาตให้เฉพาะแอดมินเขียนได้
@@ -9,7 +10,7 @@
 -- ⚠️ ฟังก์ชันนี้คือด่านตรวจความปลอดภัยหลัก
 --   ใครที่มี anon key (เป็น key สาธารณะ) เรียกฟังก์ชันนี้ตรง ๆ ได้โดยไม่ผ่านหน้าเว็บ
 --   - คิดราคาจากตาราง products เอง ไม่เชื่อราคาจากเบราว์เซอร์
---   - คิดค่าส่งจาก settings และส่งฟรีเมื่อครบจำนวนถุงที่กำหนด
+--   - คิดค่าส่งจาก settings และส่งฟรีเมื่อครบจำนวนถุงที่แอดมินตั้งไว้ (settings.free_shipping_min_qty)
 --   - บังคับสถานะ pending / unpaid เสมอ
 --   - จำกัดจำนวนออเดอร์ต่อเบอร์โทร กันสแปม
 --   - บันทึกออเดอร์และรายการสินค้าในขั้นตอนเดียว ถ้าพังกลางทางจะยกเลิกทั้งหมด
@@ -32,7 +33,6 @@ set search_path = ''
 as $$
 declare
   -- ⚠️ ค่าเหล่านี้ต้องตรงกับฝั่งเว็บ (lib/shop-config.ts และ lib/order-rules.ts)
-  c_free_shipping_min_qty constant int := 10;
   c_max_lines constant int := 20;
   c_max_quantity constant int := 999;
   c_max_delivery_days constant int := 7;
@@ -51,6 +51,7 @@ declare
   v_total_qty int;
   v_subtotal numeric(10,2);
   v_delivery_fee numeric(10,2);
+  v_free_shipping_min_qty int;
   v_total numeric(10,2);
   v_order_id uuid;
   v_order_no text;
@@ -136,13 +137,15 @@ begin
     raise exception 'ICE_RATE_LIMITED';
   end if;
 
-  -- 4) ค่าส่ง (ส่งฟรีเมื่อครบจำนวนถุง)
-  select s.delivery_fee into v_delivery_fee
+  -- 4) ค่าส่ง (ส่งฟรีเมื่อครบจำนวนถุงที่ตั้งไว้ / 0 = ไม่มีส่งฟรี)
+  select s.delivery_fee, s.free_shipping_min_qty
+  into v_delivery_fee, v_free_shipping_min_qty
   from public.settings as s
   where s.id = 1;
 
   v_delivery_fee := coalesce(v_delivery_fee, 0);
-  if v_total_qty >= c_free_shipping_min_qty then
+  if coalesce(v_free_shipping_min_qty, 0) > 0
+     and v_total_qty >= v_free_shipping_min_qty then
     v_delivery_fee := 0;
   end if;
   v_total := v_subtotal + v_delivery_fee;

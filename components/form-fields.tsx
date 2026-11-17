@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AlertIcon } from "../icons";
+import { AlertIcon } from "./icons";
 
 /** ส่วนประกอบของช่องกรอกในฟอร์มสั่งซื้อ (label / คำอธิบาย / ข้อความผิดพลาด) */
 

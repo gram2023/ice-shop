@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { getDeliveryDays } from "@/lib/delivery";
 import { shopConfig } from "@/lib/shop-config";
 import { useMinuteClock } from "@/lib/use-minute-clock";
-import { describedBy, Field, inputClass } from "./form-fields";
+import { describedBy, Field, inputClass } from "../form-fields";
 
 type Props = {
   dateId: string;

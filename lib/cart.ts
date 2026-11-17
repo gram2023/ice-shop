@@ -1,14 +1,12 @@
 import type { Product } from "./data";
 import { ORDER_LIMITS } from "./order-rules";
+import { isUuid } from "./uuid";
 
 /** สินค้า 1 รายการในตะกร้า เก็บแค่รหัสสินค้ากับจำนวน (ราคาดึงจากฐานข้อมูลเสมอ) */
 export type CartLine = {
   productId: string;
   quantity: number;
 };
-
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function isValidQuantity(value: unknown): value is number {
   return (
@@ -22,7 +20,7 @@ function isValidQuantity(value: unknown): value is number {
 function toLine(value: unknown): CartLine | null {
   if (typeof value !== "object" || value === null) return null;
   const { productId, quantity } = value as Record<string, unknown>;
-  if (typeof productId !== "string" || !UUID_RE.test(productId)) return null;
+  if (!isUuid(productId)) return null;
   if (!isValidQuantity(quantity)) return null;
   return { productId, quantity };
 }

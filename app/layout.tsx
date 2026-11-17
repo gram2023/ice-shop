@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 import { shopConfig } from "@/lib/shop-config";
 import "./globals.css";
 
@@ -23,6 +21,11 @@ export const viewport: Viewport = {
   themeColor: "#1d4ed8",
 };
 
+/**
+ * layout ชั้นนอกสุด: ฟอนต์และโครง html/body เท่านั้น
+ * - หน้าลูกค้า (เมนู + ส่วนท้าย) อยู่ที่ app/(shop)/layout.tsx
+ * - หน้าแอดมินอยู่ที่ app/admin/layout.tsx
+ */
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -30,9 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${notoSansThai.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-white text-slate-800">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

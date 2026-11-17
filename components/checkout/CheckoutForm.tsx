@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState, useTransition, type FormEvent } from "react";
-import { placeOrder } from "@/app/checkout/actions";
+import { placeOrder } from "@/app/(shop)/checkout/actions";
 import type { CartLine } from "@/lib/cart";
 import { clearCart, saveLastOrder } from "@/lib/cart-store";
 import {
@@ -16,7 +16,7 @@ import { ORDER_LIMITS, PAYMENT_METHODS } from "@/lib/order-rules";
 import { shopConfig } from "@/lib/shop-config";
 import { AlertIcon } from "../icons";
 import DeliverySlotPicker from "./DeliverySlotPicker";
-import { describedBy, Field, FieldError, inputClass } from "./form-fields";
+import { describedBy, Field, FieldError, inputClass } from "../form-fields";
 
 type Props = {
   lines: CartLine[];

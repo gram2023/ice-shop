@@ -164,6 +164,17 @@ export default function Navbar() {
               </li>
             );
           })}
+          {/* สำหรับเจ้าของร้าน: แยกจากเมนูลูกค้าด้วยเส้นคั่น · ไม่โหลดล่วงหน้า (ไม่ยิงตรวจสิทธิ์โดยไม่จำเป็น) */}
+          <li className="mt-2 border-t border-sky-100 pt-3">
+            <Link
+              href="/admin/login"
+              prefetch={false}
+              onClick={() => setOpen(false)}
+              className="flex min-h-12 items-center rounded-xl px-4 text-base font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            >
+              เข้าสู่ระบบแอดมิน
+            </Link>
+          </li>
         </ul>
       </div>
     </header>

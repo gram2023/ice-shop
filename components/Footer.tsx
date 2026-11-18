@@ -67,8 +67,17 @@ export default async function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 py-4 text-center text-xs text-sky-200/70">
-        © {shop.name} สงวนลิขสิทธิ์
+      <div className="flex flex-wrap items-center justify-center gap-x-2 border-t border-white/10 px-4 py-3 text-center text-xs text-sky-200/70">
+        <span>© {shop.name} สงวนลิขสิทธิ์</span>
+        <span aria-hidden="true">·</span>
+        {/* ทางเข้าหน้าแอดมิน (บนคอมไม่มีเมนูแฮมเบอร์เกอร์) · ไม่โหลดล่วงหน้า */}
+        <Link
+          href="/admin/login"
+          prefetch={false}
+          className="inline-flex min-h-8 items-center rounded px-1 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
+        >
+          สำหรับแอดมิน
+        </Link>
       </div>
     </footer>
   );

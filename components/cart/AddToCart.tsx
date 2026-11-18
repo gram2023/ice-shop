@@ -46,10 +46,10 @@ export default function AddToCart({ productId, productName }: Props) {
         <button
           type="button"
           onClick={handleAdd}
-          className={`h-11 min-w-0 flex-1 rounded-xl px-3 text-base font-semibold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${
+          className={`h-11 min-w-0 flex-1 rounded-lg px-3 font-display text-base transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 ${
             status === "added"
-              ? "bg-green-700 hover:bg-green-800"
-              : "bg-blue-600 hover:bg-blue-700"
+              ? "bg-forest-600 text-white hover:bg-forest-700"
+              : "bg-sun-400 text-forest-950 hover:bg-sun-300"
           }`}
         >
           {status === "added" ? "เพิ่มแล้ว ✓" : "ใส่ตะกร้า"}
@@ -66,7 +66,7 @@ export default function AddToCart({ productId, productName }: Props) {
             ในตะกร้า {inCart} ถุง ·{" "}
             <Link
               href="/cart"
-              className="font-semibold text-blue-700 underline-offset-2 hover:underline"
+              className="font-semibold text-forest-700 underline-offset-2 hover:underline"
             >
               ดูตะกร้า
             </Link>

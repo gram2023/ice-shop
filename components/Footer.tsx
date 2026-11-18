@@ -8,14 +8,14 @@ export default async function Footer() {
   const shop = await getShopProfile();
 
   return (
-    <footer className="mt-auto bg-blue-950 text-sky-100">
+    <footer className="mt-auto bg-forest-950 text-forest-100">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2">
-            <IceIcon className="size-7 text-sky-300" />
-            <p className="text-xl font-bold text-white">{shop.name}</p>
+            <IceIcon className="size-7 text-sun-400" />
+            <p className="font-display text-xl text-white uppercase">{shop.name}</p>
           </div>
-          <p className="mt-2 text-sm leading-relaxed text-sky-200/80">{shop.tagline}</p>
+          <p className="mt-2 text-sm leading-relaxed text-forest-200">{shop.tagline}</p>
         </div>
 
         <ul className="space-y-3 text-base">
@@ -24,7 +24,7 @@ export default async function Footer() {
               href={telHref(shop.phone)}
               className="inline-flex items-center gap-2 hover:text-white hover:underline"
             >
-              <PhoneIcon className="size-5 shrink-0 text-sky-300" />
+              <PhoneIcon className="size-5 shrink-0 text-sun-400" />
               <span>โทร {shop.phone}</span>
             </a>
           </li>
@@ -36,7 +36,7 @@ export default async function Footer() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 hover:text-white hover:underline"
               >
-                <ChatIcon className="size-5 shrink-0 text-sky-300" />
+                <ChatIcon className="size-5 shrink-0 text-sun-400" />
                 <span>LINE: {shop.lineId}</span>
               </a>
             </li>
@@ -46,16 +46,16 @@ export default async function Footer() {
               href="/track"
               className="inline-flex items-center gap-2 hover:text-white hover:underline"
             >
-              <CartIcon className="size-5 shrink-0 text-sky-300" />
+              <CartIcon className="size-5 shrink-0 text-sun-400" />
               <span>ติดตามออเดอร์</span>
             </Link>
           </li>
         </ul>
 
         <div className="flex gap-2">
-          <ClockIcon className="mt-0.5 size-5 shrink-0 text-sky-300" />
+          <ClockIcon className="mt-0.5 size-5 shrink-0 text-sun-400" />
           <div>
-            <p className="font-semibold text-white">เวลาเปิด-ปิด</p>
+            <p className="font-display text-white">เวลาเปิด-ปิด</p>
             <ul className="mt-1 space-y-1 text-sm">
               {shop.openingHours.map((h) => (
                 <li key={`${h.label}-${h.open}`}>
@@ -67,14 +67,14 @@ export default async function Footer() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-x-2 border-t border-white/10 px-4 py-3 text-center text-xs text-sky-200/70">
+      <div className="flex flex-wrap items-center justify-center gap-x-2 border-t border-white/10 px-4 py-3 text-center text-xs text-forest-200/80">
         <span>© {shop.name} สงวนลิขสิทธิ์</span>
         <span aria-hidden="true">·</span>
         {/* ทางเข้าหน้าแอดมิน (บนคอมไม่มีเมนูแฮมเบอร์เกอร์) · ไม่โหลดล่วงหน้า */}
         <Link
           href="/admin/login"
           prefetch={false}
-          className="inline-flex min-h-8 items-center rounded px-1 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
+          className="inline-flex min-h-8 items-center rounded px-1 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sun-400"
         >
           สำหรับแอดมิน
         </Link>

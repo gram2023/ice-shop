@@ -2,12 +2,74 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import ContactButtons from "@/components/ContactButtons";
-import { ArrowRightIcon, CheckIcon } from "@/components/icons";
-import ProductList, { ProductListSkeleton } from "@/components/ProductList";
+import { StarBadge, TornEdge } from "@/components/decor";
+import {
+  ArrowRightIcon,
+  CartIcon,
+  CheckIcon,
+  ClockIcon,
+  IceIcon,
+  TagIcon,
+} from "@/components/icons";
+import { ProductImagePlaceholder } from "@/components/ProductImage";
+import ProductOrderList, { ProductOrderListSkeleton } from "@/components/ProductOrderList";
 import PromoBanner, { PromoBannerSkeleton } from "@/components/PromoBanner";
+import SectionHeading from "@/components/SectionHeading";
 import ShopInfoCards from "@/components/ShopInfoCards";
 import ShopMap from "@/components/ShopMap";
 import { getShopProfile } from "@/lib/shop-profile-server";
+
+/** จุดเด่นของระบบสั่งซื้อ (เป็นความจริงของเว็บนี้ทุกร้าน จึงไม่ต้องให้แอดมินแก้) */
+const FEATURES = [
+  { icon: CheckIcon, label: "ไม่ต้องสมัครสมาชิก" },
+  { icon: ClockIcon, label: "เลือกวันเวลาส่งได้" },
+  { icon: CartIcon, label: "ติดตามออเดอร์ได้" },
+];
+
+/** ไอคอนของการ์ดจุดเด่นร้าน (วนตามลำดับ) */
+const HIGHLIGHT_ICONS = [IceIcon, ClockIcon, TagIcon];
+
+const frameClass = "rounded-lg bg-white p-2 shadow-xl shadow-forest-950/30";
+
+/**
+ * ภาพในส่วนหัว: รูปที่แอดมินอัปโหลด (กรอบขาววางเอียง)
+ * ยังไม่มีรูป → กรอบลายน้ำแข็งตกแต่ง เฉพาะจอใหญ่ (มือถือไม่แสดง หน้าจะได้สั้น)
+ */
+function HeroVisual({ imageUrl, shopName }: { imageUrl: string | null; shopName: string }) {
+  if (imageUrl) {
+    return (
+      <div className="relative mx-auto w-full max-w-sm md:max-w-md">
+        <div className={`${frameClass} rotate-3`}>
+          <div className="relative aspect-4/3 overflow-hidden rounded-md bg-forest-100">
+            <Image
+              src={imageUrl}
+              alt={`ร้าน ${shopName}`}
+              fill
+              priority
+              sizes="(min-width: 768px) 448px, 90vw"
+              className="object-cover"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div aria-hidden="true" className="relative hidden h-80 md:block lg:h-96">
+      <div className={`${frameClass} absolute top-0 right-4 w-60 rotate-6 lg:w-72`}>
+        <div className="relative aspect-4/5 overflow-hidden rounded-md">
+          <ProductImagePlaceholder />
+        </div>
+      </div>
+      <div className={`${frameClass} absolute bottom-0 left-6 w-44 -rotate-6 lg:w-52`}>
+        <div className="relative aspect-square overflow-hidden rounded-md">
+          <ProductImagePlaceholder />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default async function HomePage() {
   const shop = await getShopProfile();
@@ -15,136 +77,121 @@ export default async function HomePage() {
   return (
     <>
       {/* ส่วนหัว (Hero) */}
-      <section className="relative overflow-hidden bg-linear-to-br from-blue-700 via-blue-600 to-sky-500 text-white">
-        {/* รูปพื้นหลังที่แอดมินอัปโหลด (มีชั้นสีน้ำเงินทับ ให้ตัวหนังสืออ่านง่าย) */}
-        {shop.heroImageUrl && (
-          <>
-            <Image
-              src={shop.heroImageUrl}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-            <div aria-hidden="true" className="absolute inset-0 bg-blue-900/65" />
-          </>
-        )}
-        {/* ก้อนน้ำแข็งตกแต่ง */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-12 -right-12 size-48 rotate-12 rounded-[2.5rem] border border-white/30 bg-white/10 sm:size-72"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute right-10 bottom-10 size-20 -rotate-6 rounded-3xl border border-white/25 bg-white/10 sm:right-48 sm:size-32"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 right-4 hidden size-12 rotate-45 rounded-xl bg-white/15 sm:block"
-        />
-
-        <div className="relative mx-auto max-w-6xl px-4 pt-14 pb-20 sm:px-6 md:pt-20 md:pb-28">
-          <p className="inline-flex items-center rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium ring-1 ring-white/30">
-            สั่งออนไลน์ ไม่ต้องสมัครสมาชิก
-          </p>
-          <h1 className="mt-4 text-4xl leading-snug font-extrabold sm:text-5xl md:text-6xl">
-            {shop.name}
-          </h1>
-          <p className="mt-3 max-w-xl text-lg leading-relaxed text-sky-50 sm:text-xl">
-            {shop.tagline}
-          </p>
-          <Link
-            href="/products"
-            className="mt-8 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-white px-8 text-lg font-bold text-blue-700 shadow-lg shadow-blue-900/20 transition-colors hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-auto"
-          >
-            สั่งซื้อน้ำแข็ง
-            <ArrowRightIcon className="size-5" />
-          </Link>
+      <section className="relative overflow-hidden bg-forest-700 text-white">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pt-10 pb-16 sm:px-6 md:grid-cols-2 md:pt-16 md:pb-24">
+          <div>
+            <h1 className="font-display text-4xl leading-tight uppercase sm:text-5xl lg:text-6xl">
+              สั่งน้ำแข็งออนไลน์กับ <span className="text-sun-400">{shop.name}</span>
+            </h1>
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-forest-100 sm:text-xl">
+              {shop.tagline}
+            </p>
+            <div className="mt-8 flex items-center gap-4">
+              <Link
+                href="/products"
+                className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-lg bg-ember-600 px-7 font-display text-lg text-white shadow-md shadow-forest-950/30 transition-colors hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:flex-none"
+              >
+                สั่งซื้อน้ำแข็ง
+                <ArrowRightIcon className="size-5" />
+              </Link>
+              <StarBadge>ส่งถึงที่!</StarBadge>
+            </div>
+            <ul className="mt-10 grid max-w-md grid-cols-3 gap-3">
+              {FEATURES.map(({ icon: Icon, label }) => (
+                <li
+                  key={label}
+                  className="flex flex-col items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-2 py-3 text-center text-xs font-semibold sm:text-sm"
+                >
+                  <Icon className="size-7 text-sun-400" />
+                  {label}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <HeroVisual imageUrl={shop.heroImageUrl} shopName={shop.name} />
         </div>
+        <TornEdge className="absolute inset-x-0 bottom-0 h-4 text-white sm:h-6" />
       </section>
 
       {/* แถบโปรโมชั่น (ดึงจากตาราง settings) */}
-      <div className="relative z-10 mx-auto -mt-8 max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
         <Suspense fallback={<PromoBannerSkeleton />}>
           <PromoBanner />
         </Suspense>
       </div>
 
       {/* เกี่ยวกับร้าน */}
-      <section
-        aria-labelledby="about-heading"
-        className="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16"
-      >
-        <div className="grid gap-8 md:grid-cols-2 md:items-center">
-          <div>
-            <h2
-              id="about-heading"
-              className="text-2xl font-bold text-blue-950 sm:text-3xl"
-            >
-              เกี่ยวกับร้าน
-            </h2>
-            <p className="mt-4 text-base leading-relaxed whitespace-pre-line text-slate-600 sm:text-lg">
-              {shop.description}
-            </p>
-          </div>
-          <ul className="grid gap-3">
-            {shop.highlights.map((item) => (
-              <li
-                key={item.title}
-                className="flex items-start gap-3 rounded-2xl border border-sky-100 bg-sky-50/60 p-4"
-              >
-                <CheckIcon className="size-7 shrink-0 text-blue-600" />
+      <section aria-labelledby="about-heading" className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20">
+        <SectionHeading
+          id="about-heading"
+          eyebrow="เกี่ยวกับร้าน"
+          title={`ทำไมต้อง ${shop.name}`}
+          description={<span className="whitespace-pre-line">{shop.description}</span>}
+          align="center"
+        />
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {shop.highlights.map((item, i) => {
+            const Icon = HIGHLIGHT_ICONS[i % HIGHLIGHT_ICONS.length];
+            return (
+              // มือถือ: ไอคอนอยู่ซ้าย (การ์ดเตี้ยลง) / จอใหญ่: ไอคอนอยู่บน
+              <li key={item.title} className="flex gap-4 rounded-xl bg-stone-100 p-5 sm:block">
+                <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-forest-700 text-white">
+                  <Icon className="size-6" />
+                </span>
                 <div>
-                  <p className="font-bold text-blue-950">{item.title}</p>
-                  <p className="text-slate-600">{item.detail}</p>
+                  <p className="font-display text-lg text-forest-800 uppercase sm:mt-4">{item.title}</p>
+                  <p className="mt-1 leading-relaxed text-slate-600">{item.detail}</p>
                 </div>
               </li>
-            ))}
-          </ul>
-        </div>
+            );
+          })}
+        </ul>
       </section>
 
-      {/* ประเภทน้ำแข็งที่จำหน่าย (ดึงจากตาราง products) */}
-      <section
-        aria-labelledby="products-heading"
-        className="bg-sky-50 py-12 md:py-16"
-      >
+      {/* สินค้า: เลือกจำนวนและใส่ตะกร้าได้จากหน้าแรกเลย */}
+      <TornEdge className="h-4 text-forest-700 sm:h-6" />
+      <section aria-labelledby="products-heading" className="bg-forest-700 py-12 md:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <h2
+          <SectionHeading
             id="products-heading"
-            className="text-2xl font-bold text-blue-950 sm:text-3xl"
-          >
-            ประเภทน้ำแข็งที่จำหน่าย
-          </h2>
-          <div className="mt-6">
-            <Suspense fallback={<ProductListSkeleton />}>
-              <ProductList />
+            eyebrow="สินค้าของเรา"
+            title="เลือกน้ำแข็งที่ต้องการ"
+            description="เลือกจำนวนแล้วกด “ใส่ตะกร้า” สั่งได้ทันที"
+            align="center"
+            tone="dark"
+          />
+          <div className="mt-8">
+            <Suspense fallback={<ProductOrderListSkeleton />}>
+              <ProductOrderList headingLevel={3} />
             </Suspense>
+          </div>
+          <div className="mt-8 flex justify-center">
+            <Link
+              href="/cart"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-sun-400 px-8 font-display text-lg text-forest-950 transition-colors hover:bg-sun-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              ไปที่ตะกร้า
+              <ArrowRightIcon className="size-5" />
+            </Link>
           </div>
         </div>
       </section>
+      <TornEdge flip className="h-4 text-forest-700 sm:h-6" />
 
-      {/* ช่องทางติดต่อร้าน */}
-      <section
-        aria-labelledby="contact-heading"
-        className="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16"
-      >
-        <h2
+      {/* ช่องทางติดต่อร้าน + แผนที่ */}
+      <section aria-labelledby="contact-heading" className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20">
+        <SectionHeading
           id="contact-heading"
-          className="text-2xl font-bold text-blue-950 sm:text-3xl"
-        >
-          ช่องทางติดต่อร้าน
-        </h2>
-        <p className="mt-2 text-slate-600">
-          สอบถามหรือสั่งซื้อทางโทรศัพท์และ LINE ได้เลย
-        </p>
-        <div className="mt-6 space-y-3">
+          eyebrow="ติดต่อเรา"
+          title="ช่องทางติดต่อร้าน"
+          description="สอบถามหรือสั่งซื้อทางโทรศัพท์และ LINE ได้เลย"
+        />
+        <div className="mt-8 space-y-3">
           <ContactButtons />
           <ShopInfoCards />
         </div>
 
-        <h3 id="home-map-heading" className="mt-10 text-xl font-bold text-blue-950">
+        <h3 id="home-map-heading" className="mt-12 font-display text-2xl text-forest-800 uppercase">
           แผนที่ร้าน
         </h3>
         <div className="mt-3">
@@ -153,7 +200,7 @@ export default async function HomePage() {
 
         <Link
           href="/contact"
-          className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full px-1 font-semibold text-blue-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-lg px-1 font-semibold text-forest-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
         >
           ดูคำถามที่พบบ่อย
           <ArrowRightIcon className="size-5" />

@@ -1,10 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_Thai } from "next/font/google";
+import { Kanit, Noto_Sans_Thai } from "next/font/google";
 import { getShopProfile } from "@/lib/shop-profile-server";
 import "./globals.css";
 
 const notoSansThai = Noto_Sans_Thai({
   variable: "--font-noto-sans-thai",
+  subsets: ["thai", "latin"],
+  display: "swap",
+});
+
+/** ฟอนต์หัวข้อ: โหลดเฉพาะตัวหนา (700) น้ำหนักเดียว เพื่อให้หน้าเว็บโหลดเร็ว */
+const kanit = Kanit({
+  variable: "--font-kanit",
+  weight: "700",
   subsets: ["thai", "latin"],
   display: "swap",
 });
@@ -22,7 +30,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#1d4ed8",
+  // สีแถบเบราว์เซอร์บนมือถือ = สีเมนูด้านบน (forest-700)
+  themeColor: "#1e5a35",
 };
 
 /**
@@ -34,7 +43,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="th"
-      className={`${notoSansThai.variable} h-full antialiased`}
+      className={`${notoSansThai.variable} ${kanit.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-white text-slate-800">
         {children}

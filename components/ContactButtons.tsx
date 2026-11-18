@@ -3,7 +3,7 @@ import { getShopProfile } from "@/lib/shop-profile-server";
 import { ChatIcon, FacebookIcon, PhoneIcon } from "./icons";
 
 const baseButton =
-  "flex min-h-14 items-center gap-3 rounded-2xl px-5 py-3 text-left font-semibold shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
+  "flex min-h-14 items-center gap-3 rounded-xl px-5 py-3 text-left font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
 
 /** ปุ่มติดต่อร้านขนาดใหญ่: โทร / LINE / Facebook (ช่องไหนแอดมินไม่ได้ใส่ จะไม่แสดง) */
 export default async function ContactButtons() {
@@ -16,7 +16,7 @@ export default async function ContactButtons() {
     <div className={`grid gap-3 ${columns === 3 ? "sm:grid-cols-3" : columns === 2 ? "sm:grid-cols-2" : ""}`}>
       <a
         href={telHref(shop.phone)}
-        className={`${baseButton} bg-blue-600 text-white hover:bg-blue-700 focus-visible:outline-blue-600`}
+        className={`${baseButton} bg-forest-700 text-white hover:bg-forest-800 focus-visible:outline-forest-700`}
       >
         <PhoneIcon className="size-7 shrink-0" />
         <span className="flex flex-col leading-tight">
@@ -45,7 +45,7 @@ export default async function ContactButtons() {
           href={shop.facebookUrl ?? undefined}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${baseButton} border border-sky-200 bg-white text-blue-900 hover:bg-sky-50 focus-visible:outline-blue-600`}
+          className={`${baseButton} border border-stone-300 bg-white text-forest-900 hover:bg-stone-50 focus-visible:outline-forest-700`}
         >
           <FacebookIcon className="size-7 shrink-0 text-[#1877F2]" />
           <span className="flex flex-col leading-tight">

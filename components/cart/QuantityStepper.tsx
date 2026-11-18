@@ -13,7 +13,7 @@ type Props = {
 };
 
 const buttonClass =
-  "grid size-11 place-items-center text-blue-700 transition-colors hover:bg-sky-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-transparent";
+  "grid size-11 place-items-center text-forest-700 transition-colors hover:bg-forest-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-forest-600 disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-transparent";
 
 /** ปุ่ม − [จำนวน] + สำหรับเลือกจำนวนถุง */
 export default function QuantityStepper({ value, onChange, label }: Props) {
@@ -24,7 +24,7 @@ export default function QuantityStepper({ value, onChange, label }: Props) {
     <div
       role="group"
       aria-label={label}
-      className="inline-flex shrink-0 items-center overflow-hidden rounded-xl border border-sky-200 bg-white"
+      className="inline-flex shrink-0 items-center overflow-hidden rounded-lg border border-stone-300 bg-white"
     >
       <button
         type="button"
@@ -47,7 +47,7 @@ export default function QuantityStepper({ value, onChange, label }: Props) {
           if (digits) onChange(clampQuantity(Number(digits)));
         }}
         onBlur={() => setDraft(null)}
-        className="h-11 w-14 border-x border-sky-200 text-center text-lg font-semibold text-blue-950 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600"
+        className="h-11 w-14 border-x border-stone-300 text-center text-lg font-semibold text-slate-900 focus:outline-2 focus:-outline-offset-2 focus:outline-forest-600"
       />
       <button
         type="button"

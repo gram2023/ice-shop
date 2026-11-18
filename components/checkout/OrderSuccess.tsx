@@ -8,9 +8,10 @@ import { formatPrice } from "@/lib/format";
 import { paymentMethodLabel } from "@/lib/order-rules";
 import type { OrderSummary } from "@/lib/order-summary";
 import type { PaymentInfo } from "@/lib/settings";
-import { shopConfig } from "@/lib/shop-config";
+import { telHref } from "@/lib/shop-profile";
 import OrderTotals from "../cart/OrderTotals";
-import { ChatIcon, CheckIcon } from "../icons";
+import { ChatIcon, CheckIcon, PhoneIcon } from "../icons";
+import { useShopProfile } from "../ShopProfileProvider";
 
 /** หน้าแสดงผลหลังสั่งซื้อสำเร็จ (payment = ข้อมูลชำระเงินที่แอดมินตั้งไว้) */
 export default function OrderSuccess({
@@ -117,7 +118,11 @@ function PaymentInstructions({
   order: OrderSummary;
   payment: PaymentInfo;
 }) {
+  const shop = useShopProfile();
   const amount = formatPrice(order.total);
+  // ร้านไม่มี LINE → ให้ติดต่อทางโทรศัพท์แทน
+  const line = shop.lineId && shop.lineUrl ? { id: shop.lineId, url: shop.lineUrl } : null;
+  const channel = line ? "LINE" : `โทรศัพท์ ${shop.phone}`;
 
   if (order.paymentMethod === "cod") {
     return (
@@ -144,8 +149,8 @@ function PaymentInstructions({
         <h3 className="text-lg font-bold text-blue-950">ชำระเงิน {amount}</h3>
         <p className="text-sm text-slate-600">
           {ready
-            ? `ชำระแล้วส่งสลิปทาง LINE พร้อมแจ้งเลขคำสั่งซื้อ ${order.orderNo}`
-            : `ร้านจะส่ง${what}ให้ทาง LINE กรุณาทัก LINE ร้านพร้อมแจ้งเลขคำสั่งซื้อ ${order.orderNo} และส่งสลิปกลับมาหลังชำระเงิน`}
+            ? `ชำระแล้วแจ้งร้านทาง${channel} พร้อมเลขคำสั่งซื้อ ${order.orderNo}`
+            : `ร้านจะแจ้ง${what}ให้ทาง${channel} กรุณาติดต่อร้านพร้อมแจ้งเลขคำสั่งซื้อ ${order.orderNo} และส่งสลิปหลังชำระเงิน`}
         </p>
       </div>
 
@@ -199,17 +204,25 @@ function PaymentInstructions({
         </div>
       )}
 
-      <a
-        href={shopConfig.lineUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-green-700 px-6 py-2 text-center font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
-      >
-        <ChatIcon className="size-6 shrink-0" />
-        {ready
-          ? `ส่งสลิปทาง LINE (${shopConfig.lineId})`
-          : `ทัก LINE เพื่อรับ${what} (${shopConfig.lineId})`}
-      </a>
+      {line ? (
+        <a
+          href={line.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-green-700 px-6 py-2 text-center font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+        >
+          <ChatIcon className="size-6 shrink-0" />
+          {ready ? `ส่งสลิปทาง LINE (${line.id})` : `ทัก LINE เพื่อรับ${what} (${line.id})`}
+        </a>
+      ) : (
+        <a
+          href={telHref(shop.phone)}
+          className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-2 text-center font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        >
+          <PhoneIcon className="size-6 shrink-0" />
+          โทรหาร้าน {shop.phone}
+        </a>
+      )}
     </div>
   );
 }

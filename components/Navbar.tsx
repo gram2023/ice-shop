@@ -1,11 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cartItemCount, useCartLines } from "@/lib/cart-store";
-import { shopConfig } from "@/lib/shop-config";
 import { CartIcon, CloseIcon, IceIcon, MenuIcon } from "./icons";
+import { useShopProfile } from "./ShopProfileProvider";
 
 const menuItems = [
   { href: "/", label: "หน้าหลัก" },
@@ -35,6 +36,7 @@ function CartBadge({ count }: { count: number }) {
 }
 
 export default function Navbar() {
+  const shop = useShopProfile();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const cartCount = cartItemCount(useCartLines());
@@ -61,11 +63,17 @@ export default function Navbar() {
           onClick={() => setOpen(false)}
           className="flex items-center gap-2 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
-          <span className="grid size-10 place-items-center rounded-xl bg-linear-to-br from-sky-400 to-blue-600 text-white shadow-sm">
-            <IceIcon className="size-6" />
-          </span>
-          <span className="text-lg font-bold text-blue-900">
-            {shopConfig.name}
+          {shop.logoUrl ? (
+            <span className="relative size-10 shrink-0 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-sky-100">
+              <Image src={shop.logoUrl} alt="" fill sizes="40px" className="object-contain" />
+            </span>
+          ) : (
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-linear-to-br from-sky-400 to-blue-600 text-white shadow-sm">
+              <IceIcon className="size-6" />
+            </span>
+          )}
+          <span className="max-w-[45vw] truncate text-lg font-bold text-blue-900 sm:max-w-none">
+            {shop.name}
           </span>
         </Link>
 

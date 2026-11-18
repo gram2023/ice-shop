@@ -5,10 +5,11 @@ import { formatDeliveryAt } from "@/lib/delivery";
 import { formatPrice } from "@/lib/format";
 import { paymentMethodLabel } from "@/lib/order-rules";
 import { PAYMENT_STATUS_LABELS } from "@/lib/order-status";
-import { phoneHref, shopConfig } from "@/lib/shop-config";
+import { telHref } from "@/lib/shop-profile";
 import { currentStepIndex, TRACK_STEPS, type TrackedOrder } from "@/lib/tracking";
 import OrderTotals from "../cart/OrderTotals";
 import { AlertIcon, ChatIcon, CheckIcon, PhoneIcon } from "../icons";
+import { useShopProfile } from "../ShopProfileProvider";
 
 const timeFormat = new Intl.DateTimeFormat("th-TH", {
   hour: "2-digit",
@@ -78,6 +79,8 @@ function StatusSteps({ current }: { current: number }) {
 
 /** ผลการติดตามออเดอร์ (ไม่มีที่อยู่ เบอร์โทร หรือหมายเหตุ — ฐานข้อมูลไม่ส่งมา) */
 export default function TrackResult({ order, updatedAt, headingRef, onReset }: Props) {
+  const shop = useShopProfile();
+  const line = shop.lineId && shop.lineUrl ? { id: shop.lineId, url: shop.lineUrl } : null;
   const current = currentStepIndex(order.status);
   const cancelled = order.status === "cancelled";
   const totalQuantity = order.items.reduce((sum, i) => sum + i.quantity, 0);
@@ -148,7 +151,9 @@ export default function TrackResult({ order, updatedAt, headingRef, onReset }: P
         </dl>
         {needsSlip && (
           <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">
-            ถ้าชำระเงินแล้ว ส่งสลิปพร้อมเลขคำสั่งซื้อทาง LINE {shopConfig.lineId} ได้เลย
+            {line
+              ? `ถ้าชำระเงินแล้ว ส่งสลิปพร้อมเลขคำสั่งซื้อทาง LINE ${line.id} ได้เลย`
+              : `ถ้าชำระเงินแล้ว แจ้งร้านพร้อมเลขคำสั่งซื้อที่เบอร์ ${shop.phone} ได้เลย`}
           </p>
         )}
         <ul className="divide-y divide-sky-100 border-y border-sky-100">
@@ -169,7 +174,7 @@ export default function TrackResult({ order, updatedAt, headingRef, onReset }: P
         />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className={`grid gap-3 ${line ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
         <button
           type="button"
           onClick={onReset}
@@ -178,21 +183,23 @@ export default function TrackResult({ order, updatedAt, headingRef, onReset }: P
           ค้นหาออเดอร์อื่น
         </button>
         <a
-          href={phoneHref()}
+          href={telHref(shop.phone)}
           className="flex h-12 items-center justify-center gap-2 rounded-full bg-blue-600 px-5 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           <PhoneIcon className="size-5" />
           โทรถามร้าน
         </a>
-        <a
-          href={shopConfig.lineUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex h-12 items-center justify-center gap-2 rounded-full bg-green-700 px-5 font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
-        >
-          <ChatIcon className="size-5" />
-          LINE ร้าน
-        </a>
+        {line && (
+          <a
+            href={line.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-12 items-center justify-center gap-2 rounded-full bg-green-700 px-5 font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+          >
+            <ChatIcon className="size-5" />
+            LINE ร้าน
+          </a>
+        )}
       </div>
     </section>
   );

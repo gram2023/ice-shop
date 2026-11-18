@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import ContactButtons from "@/components/ContactButtons";
@@ -5,13 +6,30 @@ import { ArrowRightIcon, CheckIcon } from "@/components/icons";
 import ProductList, { ProductListSkeleton } from "@/components/ProductList";
 import PromoBanner, { PromoBannerSkeleton } from "@/components/PromoBanner";
 import ShopInfoCards from "@/components/ShopInfoCards";
-import { shopConfig } from "@/lib/shop-config";
+import ShopMap from "@/components/ShopMap";
+import { getShopProfile } from "@/lib/shop-profile-server";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const shop = await getShopProfile();
+
   return (
     <>
       {/* ส่วนหัว (Hero) */}
       <section className="relative overflow-hidden bg-linear-to-br from-blue-700 via-blue-600 to-sky-500 text-white">
+        {/* รูปพื้นหลังที่แอดมินอัปโหลด (มีชั้นสีน้ำเงินทับ ให้ตัวหนังสืออ่านง่าย) */}
+        {shop.heroImageUrl && (
+          <>
+            <Image
+              src={shop.heroImageUrl}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+            <div aria-hidden="true" className="absolute inset-0 bg-blue-900/65" />
+          </>
+        )}
         {/* ก้อนน้ำแข็งตกแต่ง */}
         <div
           aria-hidden="true"
@@ -31,10 +49,10 @@ export default function HomePage() {
             สั่งออนไลน์ ไม่ต้องสมัครสมาชิก
           </p>
           <h1 className="mt-4 text-4xl leading-snug font-extrabold sm:text-5xl md:text-6xl">
-            {shopConfig.name}
+            {shop.name}
           </h1>
           <p className="mt-3 max-w-xl text-lg leading-relaxed text-sky-50 sm:text-xl">
-            {shopConfig.tagline}
+            {shop.tagline}
           </p>
           <Link
             href="/products"
@@ -66,12 +84,12 @@ export default function HomePage() {
             >
               เกี่ยวกับร้าน
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
-              {shopConfig.description}
+            <p className="mt-4 text-base leading-relaxed whitespace-pre-line text-slate-600 sm:text-lg">
+              {shop.description}
             </p>
           </div>
           <ul className="grid gap-3">
-            {shopConfig.highlights.map((item) => (
+            {shop.highlights.map((item) => (
               <li
                 key={item.title}
                 className="flex items-start gap-3 rounded-2xl border border-sky-100 bg-sky-50/60 p-4"
@@ -125,11 +143,19 @@ export default function HomePage() {
           <ContactButtons />
           <ShopInfoCards />
         </div>
+
+        <h3 id="home-map-heading" className="mt-10 text-xl font-bold text-blue-950">
+          แผนที่ร้าน
+        </h3>
+        <div className="mt-3">
+          <ShopMap headingId="home-map-heading" />
+        </div>
+
         <Link
           href="/contact"
           className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full px-1 font-semibold text-blue-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
-          ดูแผนที่และคำถามที่พบบ่อย
+          ดูคำถามที่พบบ่อย
           <ArrowRightIcon className="size-5" />
         </Link>
       </section>

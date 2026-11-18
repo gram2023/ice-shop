@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import CartView, { CartSkeleton } from "@/components/cart/CartView";
 import SectionMessage from "@/components/SectionMessage";
 import { getOrderingData } from "@/lib/data";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 
 export const metadata: Metadata = {
   title: "ตะกร้าสินค้า",
@@ -13,10 +13,11 @@ export const metadata: Metadata = {
 async function CartLoader() {
   const result = await getOrderingData();
   if (!result.ok) {
+    const shop = await getShopProfile();
     return (
       <SectionMessage variant="error">
         ไม่สามารถโหลดข้อมูลตะกร้าได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง
-        หรือโทรสั่งที่ {shopConfig.phone}
+        หรือโทรสั่งที่ {shop.phone}
       </SectionMessage>
     );
   }

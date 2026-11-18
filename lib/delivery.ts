@@ -1,13 +1,20 @@
-import { shopConfig } from "./shop-config";
+import type { OpeningHour } from "./shop-config";
+import type { DeliveryRules } from "./shop-profile";
 
 /**
  * คำนวณวันและเวลาจัดส่งที่ลูกค้าเลือกได้ (เวลาไทย)
  * - เฉพาะช่วงเวลาเปิดร้าน
- * - ล่วงหน้าอย่างน้อย deliveryLeadMinutes
- * - ไม่เกิน deliveryMaxDays วัน
+ * - ล่วงหน้าอย่างน้อย leadMinutes
+ * - ไม่เกิน maxDays วัน
+ * (เวลาเปิด-ปิดและกฎมาจากข้อมูลร้านที่แอดมินตั้งไว้)
  *
  * ประเทศไทยไม่มีเวลาออมแสง จึงใช้ +07:00 ได้ตลอดปี
  */
+export type DeliverySchedule = {
+  openingHours: OpeningHour[];
+  rules: DeliveryRules;
+};
+
 const BANGKOK_OFFSET_MS = 7 * 60 * 60 * 1000;
 const MINUTE_MS = 60 * 1000;
 const DAY_MS = 24 * 60 * MINUTE_MS;
@@ -46,9 +53,12 @@ function dayLabel(index: number, wallMidnightMs: number) {
   return date;
 }
 
-export function getDeliveryDays(nowMs: number): DeliveryDay[] {
-  const { deliveryLeadMinutes, deliveryMaxDays, deliverySlotMinutes } =
-    shopConfig.orderRules;
+export function getDeliveryDays(nowMs: number, schedule: DeliverySchedule): DeliveryDay[] {
+  const {
+    leadMinutes: deliveryLeadMinutes,
+    maxDays: deliveryMaxDays,
+    slotMinutes: deliverySlotMinutes,
+  } = schedule.rules;
   const earliest = nowMs + deliveryLeadMinutes * MINUTE_MS;
   const latest = nowMs + deliveryMaxDays * DAY_MS;
 
@@ -65,7 +75,7 @@ export function getDeliveryDays(nowMs: number): DeliveryDay[] {
     const weekday = new Date(wallMidnight).getUTCDay();
     const slots = new Set<number>();
 
-    for (const hours of shopConfig.openingHours) {
+    for (const hours of schedule.openingHours) {
       if (!hours.days.includes(weekday)) continue;
       const open = toMinutes(hours.open);
       const close = toMinutes(hours.close);
@@ -87,9 +97,26 @@ export function getDeliveryDays(nowMs: number): DeliveryDay[] {
   return days;
 }
 
-export function isValidDeliverySlot(date: string, time: string, nowMs: number) {
-  const day = getDeliveryDays(nowMs).find((d) => d.date === date);
+export function isValidDeliverySlot(
+  date: string,
+  time: string,
+  nowMs: number,
+  schedule: DeliverySchedule,
+) {
+  const day = getDeliveryDays(nowMs, schedule).find((d) => d.date === date);
   return Boolean(day?.slots.includes(time));
+}
+
+/** 90 → "1 ชั่วโมง 30 นาที", 60 → "1 ชั่วโมง", 30 → "30 นาที" */
+export function formatDuration(minutes: number) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return [h > 0 ? `${h} ชั่วโมง` : "", m > 0 ? `${m} นาที` : ""].filter(Boolean).join(" ") || "0 นาที";
+}
+
+/** ตารางจัดส่งจากข้อมูลร้าน */
+export function scheduleFrom(profile: { openingHours: OpeningHour[]; delivery: DeliveryRules }): DeliverySchedule {
+  return { openingHours: profile.openingHours, rules: profile.delivery };
 }
 
 /** "2026-11-18" + "10:30" → "2026-11-18T10:30:00+07:00" */

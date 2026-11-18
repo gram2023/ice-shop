@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 import "./globals.css";
 
 const notoSansThai = Noto_Sans_Thai({
@@ -9,13 +9,17 @@ const notoSansThai = Noto_Sans_Thai({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: `${shopConfig.name} – สั่งน้ำแข็งออนไลน์`,
-    template: `%s | ${shopConfig.name}`,
-  },
-  description: shopConfig.tagline,
-};
+/** ชื่อแท็บเบราว์เซอร์/คำอธิบายเว็บ ใช้ชื่อร้านที่แอดมินตั้งไว้ */
+export async function generateMetadata(): Promise<Metadata> {
+  const shop = await getShopProfile();
+  return {
+    title: {
+      default: `${shop.name} – สั่งน้ำแข็งออนไลน์`,
+      template: `%s | ${shop.name}`,
+    },
+    description: shop.tagline,
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#1d4ed8",

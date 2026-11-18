@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { getDeliveryDays } from "@/lib/delivery";
-import { shopConfig } from "@/lib/shop-config";
+import { getDeliveryDays, scheduleFrom } from "@/lib/delivery";
 import { useMinuteClock } from "@/lib/use-minute-clock";
+import { useShopProfile } from "../ShopProfileProvider";
 import { describedBy, Field, inputClass } from "../form-fields";
 
 type Props = {
@@ -27,8 +27,12 @@ export default function DeliverySlotPicker({
   onDateChange,
   onTimeChange,
 }: Props) {
+  const shop = useShopProfile();
   const now = useMinuteClock();
-  const days = useMemo(() => (now === null ? [] : getDeliveryDays(now)), [now]);
+  const days = useMemo(
+    () => (now === null ? [] : getDeliveryDays(now, scheduleFrom(shop))),
+    [now, shop],
+  );
 
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -39,7 +43,7 @@ export default function DeliverySlotPicker({
   if (now !== null && days.length === 0) {
     return (
       <p className="rounded-xl bg-amber-50 p-3 text-amber-900">
-        ขณะนี้ไม่มีช่วงเวลาจัดส่งให้เลือก กรุณาโทรสั่งที่ {shopConfig.phone}
+        ขณะนี้ไม่มีช่วงเวลาจัดส่งให้เลือก กรุณาโทรสั่งที่ {shop.phone}
       </p>
     );
   }

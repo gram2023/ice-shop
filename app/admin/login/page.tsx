@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import LoginForm from "@/components/admin/LoginForm";
 import { IceIcon } from "@/components/icons";
 import { safeAdminPath } from "@/lib/admin/safe-path";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 
 export const metadata: Metadata = {
   title: "เข้าสู่ระบบ",
@@ -18,7 +18,8 @@ async function LoginFormWithNext({ searchParams }: { searchParams: SearchParams 
   return <LoginForm next={safeAdminPath(Array.isArray(next) ? next[0] : next)} />;
 }
 
-export default function AdminLoginPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function AdminLoginPage({ searchParams }: { searchParams: SearchParams }) {
+  const shop = await getShopProfile();
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -27,7 +28,7 @@ export default function AdminLoginPage({ searchParams }: { searchParams: SearchP
             <IceIcon className="size-7" />
           </span>
           <h1 className="mt-3 text-xl font-bold text-slate-900">เข้าสู่ระบบแอดมิน</h1>
-          <p className="text-sm text-slate-500">{shopConfig.name}</p>
+          <p className="text-sm text-slate-500">{shop.name}</p>
         </div>
         <Suspense fallback={<LoginForm next="/admin" />}>
           <LoginFormWithNext searchParams={searchParams} />

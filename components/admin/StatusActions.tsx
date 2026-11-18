@@ -2,7 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { updateOrderStatus, type AdminActionResult } from "@/app/admin/actions";
+import {
+  deleteCancelledOrder,
+  updateOrderStatus,
+  type AdminActionResult,
+} from "@/app/admin/actions";
 import { getStatusActions, type OrderStatus, type StatusAction } from "@/lib/order-status";
 
 type Props = {
@@ -28,6 +32,19 @@ export default function StatusActions({ orderId, status }: Props) {
     startTransition(async () => {
       const result = await updateOrderStatus(orderId, status, action.to);
       if (!result.ok) setError(result);
+    });
+  }
+
+  /** ลบถาวร (เฉพาะออเดอร์ที่ยกเลิกแล้ว) — สำเร็จแล้ว server พาไปหน้ารายการเอง */
+  function remove() {
+    if (pending) return;
+    if (!window.confirm("ลบออเดอร์นี้ถาวร?\nลบแล้วกู้คืนไม่ได้ ข้อมูลลูกค้าและรายการสินค้าจะหายไปด้วย")) {
+      return;
+    }
+    setError(null);
+    startTransition(async () => {
+      const result = await deleteCancelledOrder(orderId);
+      if (result && !result.ok) setError(result);
     });
   }
 
@@ -71,6 +88,17 @@ export default function StatusActions({ orderId, status }: Props) {
             </button>
           )}
         </div>
+      )}
+
+      {status === "cancelled" && (
+        <button
+          type="button"
+          onClick={remove}
+          disabled={pending}
+          className="h-11 w-full rounded-xl border border-red-300 bg-white px-3 text-sm font-semibold text-red-700 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:opacity-60"
+        >
+          ลบออเดอร์นี้ถาวร
+        </button>
       )}
 
       {error && (

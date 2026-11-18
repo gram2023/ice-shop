@@ -1,7 +1,7 @@
 "use server";
 
 import { isValidPhone, normalizePhone } from "@/lib/order-rules";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 import { createClient } from "@/lib/supabase/server";
 import {
   isValidOrderNo,
@@ -24,7 +24,8 @@ export type TrackResult =
       fieldErrors?: Partial<Record<TrackField, string>>;
     };
 
-const GENERIC_ERROR = `ค้นหาไม่สำเร็จ กรุณาลองใหม่อีกครั้ง หรือโทรถามร้านที่ ${shopConfig.phone}`;
+const genericError = (phone: string) =>
+  `ค้นหาไม่สำเร็จ กรุณาลองใหม่อีกครั้ง หรือโทรถามร้านที่ ${phone}`;
 
 /**
  * ค้นหาออเดอร์ด้วย "เลขออเดอร์ + เบอร์โทรที่ใช้สั่ง"
@@ -45,6 +46,8 @@ export async function trackOrder(orderNoInput: unknown, phoneInput: unknown): Pr
     return { ok: false, message: "กรุณาตรวจสอบข้อมูลที่กรอก", fieldErrors };
   }
 
+  const shop = await getShopProfile();
+
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.rpc("track_order", {
@@ -59,22 +62,22 @@ export async function trackOrder(orderNoInput: unknown, phoneInput: unknown): Pr
         return {
           ok: false,
           locked: true,
-          message: `ค้นหาไม่ตรงหลายครั้งเกินไป กรุณารอ 15 นาทีแล้วลองใหม่ หรือโทรถามร้านที่ ${shopConfig.phone}`,
+          message: `ค้นหาไม่ตรงหลายครั้งเกินไป กรุณารอ 15 นาทีแล้วลองใหม่ หรือโทรถามร้านที่ ${shop.phone}`,
         };
       }
       if (error.code === "PGRST202") {
         return {
           ok: false,
-          message: `ระบบติดตามออเดอร์ยังไม่พร้อมใช้งาน กรุณาโทรถามร้านที่ ${shopConfig.phone}`,
+          message: `ระบบติดตามออเดอร์ยังไม่พร้อมใช้งาน กรุณาโทรถามร้านที่ ${shop.phone}`,
         };
       }
-      return { ok: false, message: GENERIC_ERROR };
+      return { ok: false, message: genericError(shop.phone) };
     }
 
     const parsed = parseTrackResponse(data);
     if (!parsed) {
       console.error("[trackOrder] unexpected response shape");
-      return { ok: false, message: GENERIC_ERROR };
+      return { ok: false, message: genericError(shop.phone) };
     }
     if (!parsed.found) {
       return {
@@ -87,6 +90,6 @@ export async function trackOrder(orderNoInput: unknown, phoneInput: unknown): Pr
     return { ok: true, order: parsed.order };
   } catch (err) {
     console.error("[trackOrder]", err instanceof Error ? err.message : "unknown error");
-    return { ok: false, message: GENERIC_ERROR };
+    return { ok: false, message: genericError(shop.phone) };
   }
 }

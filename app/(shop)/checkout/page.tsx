@@ -5,7 +5,7 @@ import CheckoutView, {
 } from "@/components/checkout/CheckoutView";
 import SectionMessage from "@/components/SectionMessage";
 import { getOrderingData } from "@/lib/data";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 
 export const metadata: Metadata = {
   title: "สั่งซื้อ",
@@ -15,10 +15,11 @@ export const metadata: Metadata = {
 async function CheckoutLoader() {
   const result = await getOrderingData();
   if (!result.ok) {
+    const shop = await getShopProfile();
     return (
       <SectionMessage variant="error">
         ไม่สามารถโหลดข้อมูลสำหรับสั่งซื้อได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง
-        หรือโทรสั่งที่ {shopConfig.phone}
+        หรือโทรสั่งที่ {shop.phone}
       </SectionMessage>
     );
   }

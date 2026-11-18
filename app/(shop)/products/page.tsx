@@ -6,12 +6,15 @@ import ProductOrderList, {
   ProductOrderListSkeleton,
 } from "@/components/ProductOrderList";
 import { getShopSettings } from "@/lib/data";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 
-export const metadata: Metadata = {
-  title: "สินค้า",
-  description: `เลือกซื้อน้ำแข็งจาก ${shopConfig.name} สั่งออนไลน์ ส่งถึงที่`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const shop = await getShopProfile();
+  return {
+    title: "สินค้า",
+    description: `เลือกซื้อน้ำแข็งจาก ${shop.name} สั่งออนไลน์ ส่งถึงที่`,
+  };
+}
 
 /** "· สั่งครบ N ถุง ส่งฟรี" จากการตั้งค่าร้าน (ไม่แสดงถ้าไม่มีโปรส่งฟรีหรือโหลดไม่ได้) */
 async function FreeShippingNote() {

@@ -1,5 +1,5 @@
 import { parseCartLines, type CartLine } from "./cart";
-import { isValidDeliverySlot, toBangkokIso } from "./delivery";
+import { isValidDeliverySlot, toBangkokIso, type DeliverySchedule } from "./delivery";
 import {
   isPaymentMethod,
   isValidPhone,
@@ -54,6 +54,7 @@ function text(value: unknown) {
 export function validateCheckout(
   input: unknown,
   nowMs: number,
+  schedule: DeliverySchedule,
 ): { ok: true; data: ValidCheckout } | { ok: false; errors: FieldErrors } {
   const raw = (
     typeof input === "object" && input !== null ? input : {}
@@ -92,7 +93,7 @@ export function validateCheckout(
     errors.deliveryDate = "กรุณาเลือกวันจัดส่ง";
   } else if (!deliveryTime) {
     errors.deliveryTime = "กรุณาเลือกเวลาจัดส่ง";
-  } else if (!isValidDeliverySlot(deliveryDate, deliveryTime, nowMs)) {
+  } else if (!isValidDeliverySlot(deliveryDate, deliveryTime, nowMs, schedule)) {
     errors.deliveryTime = "เวลาที่เลือกจัดส่งไม่ได้แล้ว กรุณาเลือกเวลาใหม่";
   }
 

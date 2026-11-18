@@ -1,6 +1,6 @@
 import { getActiveProducts, type Product } from "@/lib/data";
 import { formatPrice } from "@/lib/format";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 import AddToCart from "./cart/AddToCart";
 import ProductImage from "./ProductImage";
 import SectionMessage from "./SectionMessage";
@@ -44,13 +44,13 @@ function ProductOrderCard({ product }: { product: Product }) {
 
 /** รายการสินค้าสำหรับสั่งซื้อ (ต้องวางไว้ใน <Suspense>) */
 export default async function ProductOrderList() {
-  const result = await getActiveProducts();
+  const [result, shop] = await Promise.all([getActiveProducts(), getShopProfile()]);
 
   if (!result.ok) {
     return (
       <SectionMessage variant="error">
         ไม่สามารถโหลดรายการสินค้าได้ในขณะนี้ กรุณาลองใหม่อีกครั้งภายหลัง
-        หรือโทรสั่งซื้อที่ {shopConfig.phone}
+        หรือโทรสั่งซื้อที่ {shop.phone}
       </SectionMessage>
     );
   }

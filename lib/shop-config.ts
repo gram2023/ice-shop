@@ -1,8 +1,9 @@
 /**
- * ข้อมูลร้านทั้งหมดเก็บไว้ที่นี่ที่เดียว
- * แก้ไฟล์นี้ไฟล์เดียว ทุกหน้าในเว็บจะเปลี่ยนตาม
+ * "ค่าตั้งต้น" ของข้อมูลร้าน
  *
- * ⚠️ ตอนนี้เป็นข้อมูลตัวอย่าง กรุณาแก้เป็นข้อมูลจริงของร้านก่อนเปิดใช้งาน
+ * ตั้งแต่เฟส 6 แอดมินแก้ข้อมูลร้านได้ที่หน้า /admin/settings (เก็บในฐานข้อมูล)
+ * ไฟล์นี้ใช้เป็นค่าสำรองเมื่อ: ยังไม่ได้ตั้งค่าช่องนั้นในหน้าแอดมิน หรือโหลดจากฐานข้อมูลไม่ได้
+ * หน้าเว็บอ่านข้อมูลร้านผ่าน getShopProfile() / useShopProfile() ไม่ใช่จากไฟล์นี้ตรง ๆ
  */
 
 export type OpeningHour = {
@@ -86,7 +87,7 @@ export const shopConfig = {
   orderRules: {
     /** ต้องสั่งล่วงหน้าอย่างน้อยกี่นาที */
     deliveryLeadMinutes: 60,
-    /** เลือกวันจัดส่งล่วงหน้าได้ไม่เกินกี่วัน ⚠️ ต้องตรงกับ c_max_delivery_days ใน supabase/place_order.sql */
+    /** เลือกวันจัดส่งล่วงหน้าได้ไม่เกินกี่วัน ⚠️ ต้องตรงกับ c_default_max_delivery_days ใน supabase/place_order.sql */
     deliveryMaxDays: 7,
     /** เวลาจัดส่งให้เลือกทุก ๆ กี่นาที */
     deliverySlotMinutes: 30,
@@ -127,13 +128,3 @@ export const shopConfig = {
     },
   ] satisfies FaqItem[],
 };
-
-/** ข้อความเวลาเปิด-ปิด เช่น "06:00 – 18:00 น." */
-export function formatOpeningTime(hour: OpeningHour) {
-  return `${hour.open} – ${hour.close} น.`;
-}
-
-/** แปลงเบอร์โทรเป็นลิงก์สำหรับกดโทร เช่น "081-234-5678" → "tel:0812345678" */
-export function phoneHref(phone: string = shopConfig.phone) {
-  return `tel:${phone.replace(/[^\d+]/g, "")}`;
-}

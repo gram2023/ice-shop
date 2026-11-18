@@ -1,7 +1,8 @@
--- Ice Express: ฟังก์ชันรับคำสั่งซื้อจากลูกค้า (เฟส 2, ปรับปรุงเฟส 4)
+-- Ice Express: ฟังก์ชันรับคำสั่งซื้อจากลูกค้า (เฟส 2, ปรับปรุงเฟส 4 และ 6)
 -- วิธีใช้: เปิด Supabase > SQL Editor > วางทั้งไฟล์ > กด Run
 -- รันซ้ำได้ (create or replace)
--- ⚠️ ต้องรัน phase4.sql ก่อน (ฟังก์ชันนี้อ่านช่อง settings.free_shipping_min_qty)
+-- ⚠️ ต้องรัน phase4.sql และ phase6.sql ก่อน
+--    (ฟังก์ชันนี้อ่าน settings.free_shipping_min_qty และ settings.delivery_max_days)
 --
 -- ทำไมต้องมีฟังก์ชันนี้
 --   RLS ของตาราง orders / order_items อนุญาตให้เฉพาะแอดมินเขียนได้
@@ -35,7 +36,8 @@ declare
   -- ⚠️ ค่าเหล่านี้ต้องตรงกับฝั่งเว็บ (lib/shop-config.ts และ lib/order-rules.ts)
   c_max_lines constant int := 20;
   c_max_quantity constant int := 999;
-  c_max_delivery_days constant int := 7;
+  -- สั่งล่วงหน้าได้กี่วัน: ใช้ค่าจาก settings.delivery_max_days (ไม่ได้ตั้ง = 7 วัน)
+  c_default_max_delivery_days constant int := 7;
   c_rate_limit_count constant int := 3;
   c_rate_limit_window constant interval := interval '10 minutes';
 
@@ -52,6 +54,7 @@ declare
   v_subtotal numeric(10,2);
   v_delivery_fee numeric(10,2);
   v_free_shipping_min_qty int;
+  v_max_delivery_days int;
   v_total numeric(10,2);
   v_order_id uuid;
   v_order_no text;
@@ -79,9 +82,14 @@ begin
     raise exception 'ICE_INVALID_PAYMENT';
   end if;
 
+  select s.delivery_max_days into v_max_delivery_days
+  from public.settings as s
+  where s.id = 1;
+  v_max_delivery_days := coalesce(v_max_delivery_days, c_default_max_delivery_days);
+
   if p_delivery_at is null
      or p_delivery_at <= now()
-     or p_delivery_at > now() + make_interval(days => c_max_delivery_days) then
+     or p_delivery_at > now() + make_interval(days => v_max_delivery_days) then
     raise exception 'ICE_INVALID_DELIVERY_TIME';
   end if;
 

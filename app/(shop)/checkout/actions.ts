@@ -1,8 +1,9 @@
 "use server";
 
 import { validateCheckout, type FieldErrors } from "@/lib/checkout";
+import { scheduleFrom } from "@/lib/delivery";
 import { parseOrderSummary, type OrderSummary } from "@/lib/order-summary";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 import { createClient } from "@/lib/supabase/server";
 
 export type PlaceOrderResult =
@@ -15,7 +16,8 @@ export type PlaceOrderResult =
       cartChanged?: boolean;
     };
 
-const GENERIC_ERROR = `ส่งคำสั่งซื้อไม่สำเร็จ กรุณาลองใหม่อีกครั้ง หรือโทรสั่งที่ ${shopConfig.phone}`;
+const genericError = (phone: string) =>
+  `ส่งคำสั่งซื้อไม่สำเร็จ กรุณาลองใหม่อีกครั้ง หรือโทรสั่งที่ ${phone}`;
 
 /**
  * รับคำสั่งซื้อจากหน้า /checkout
@@ -24,7 +26,9 @@ const GENERIC_ERROR = `ส่งคำสั่งซื้อไม่สำเ
  * ส่วนราคา ค่าส่ง และสถานะออเดอร์ ฟังก์ชัน place_order ในฐานข้อมูลเป็นผู้กำหนดเอง
  */
 export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
-  const checked = validateCheckout(input, Date.now());
+  // เวลาเปิด-ปิด / กฎการจัดส่ง / เบอร์ร้าน จากข้อมูลร้านที่แอดมินตั้งไว้
+  const shop = await getShopProfile();
+  const checked = validateCheckout(input, Date.now(), scheduleFrom(shop));
   if (!checked.ok) {
     return {
       ok: false,
@@ -53,7 +57,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     if (error) {
       // บันทึกเฉพาะรหัสและข้อความ error ห้ามบันทึก error.details เพราะอาจมีข้อมูลลูกค้า
       console.error("[placeOrder]", error.code, error.message);
-      return mapRpcError(error.code, error.message);
+      return mapRpcError(error.code, error.message, shop.phone);
     }
 
     const summary = parseOrderSummary({
@@ -66,18 +70,22 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
       console.error("[placeOrder] unexpected response shape");
       return {
         ok: false,
-        message: `ระบบได้รับคำสั่งซื้อแล้วแต่แสดงผลไม่ได้ กรุณาโทรยืนยันกับร้านที่ ${shopConfig.phone}`,
+        message: `ระบบได้รับคำสั่งซื้อแล้วแต่แสดงผลไม่ได้ กรุณาโทรยืนยันกับร้านที่ ${shop.phone}`,
       };
     }
 
     return { ok: true, order: summary };
   } catch (err) {
     console.error("[placeOrder]", err instanceof Error ? err.message : "unknown error");
-    return { ok: false, message: GENERIC_ERROR };
+    return { ok: false, message: genericError(shop.phone) };
   }
 }
 
-function mapRpcError(code: string | undefined, message: string): PlaceOrderResult {
+function mapRpcError(
+  code: string | undefined,
+  message: string,
+  shopPhone: string,
+): PlaceOrderResult {
   const reason = message.match(/ICE_[A-Z_]+/)?.[0];
 
   switch (reason) {
@@ -90,7 +98,7 @@ function mapRpcError(code: string | undefined, message: string): PlaceOrderResul
     case "ICE_RATE_LIMITED":
       return {
         ok: false,
-        message: `เบอร์นี้สั่งซื้อหลายครั้งในเวลาสั้น ๆ กรุณารอประมาณ 10 นาที หรือโทรสั่งที่ ${shopConfig.phone}`,
+        message: `เบอร์นี้สั่งซื้อหลายครั้งในเวลาสั้น ๆ กรุณารอประมาณ 10 นาที หรือโทรสั่งที่ ${shopPhone}`,
       };
     case "ICE_INVALID_DELIVERY_TIME":
       return {
@@ -120,11 +128,11 @@ function mapRpcError(code: string | undefined, message: string): PlaceOrderResul
   if (code === "PGRST202") {
     return {
       ok: false,
-      message: `ระบบสั่งซื้อออนไลน์ยังไม่พร้อมใช้งาน กรุณาโทรสั่งที่ ${shopConfig.phone}`,
+      message: `ระบบสั่งซื้อออนไลน์ยังไม่พร้อมใช้งาน กรุณาโทรสั่งที่ ${shopPhone}`,
     };
   }
 
-  return { ok: false, message: GENERIC_ERROR };
+  return { ok: false, message: genericError(shopPhone) };
 }
 
 function fieldError(field: keyof FieldErrors, text: string): PlaceOrderResult {

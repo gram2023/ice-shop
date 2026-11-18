@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import TrackOrderView from "@/components/track/TrackOrderView";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 import { isValidOrderNo, normalizeOrderNo } from "@/lib/tracking";
 
-export const metadata: Metadata = {
-  title: "ติดตามออเดอร์",
-  description: `ตรวจสอบสถานะคำสั่งซื้อน้ำแข็งจาก ${shopConfig.name}`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const shop = await getShopProfile();
+  return {
+    title: "ติดตามออเดอร์",
+    description: `ตรวจสอบสถานะคำสั่งซื้อน้ำแข็งจาก ${shop.name}`,
+  };
+}
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 

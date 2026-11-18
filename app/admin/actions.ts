@@ -116,6 +116,43 @@ export async function updatePaymentStatus(
   return { ok: true };
 }
 
+/**
+ * ลบออเดอร์ถาวร — เฉพาะออเดอร์ที่ "ยกเลิก" แล้วเท่านั้น
+ * (ฐานข้อมูลกันอีกชั้นด้วย policy "delete only cancelled orders" ใน phase6.sql)
+ * ลบสำเร็จ → กลับไปหน้ารายการออเดอร์ที่ยกเลิก
+ */
+export async function deleteCancelledOrder(orderId: unknown): Promise<AdminActionResult> {
+  if (!(await isAdminRequest())) return NO_PERMISSION;
+  if (!isUuid(orderId)) return { ok: false, message: "ลบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง" };
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("orders")
+      .delete()
+      .eq("id", orderId)
+      .eq("status", "cancelled")
+      .select("id");
+
+    if (error) {
+      console.error("[deleteCancelledOrder]", error.code, error.message);
+      return { ok: false, message: "ลบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง" };
+    }
+    if (!data || data.length === 0) {
+      return {
+        ok: false,
+        conflict: true,
+        message: "ลบไม่ได้: ออเดอร์นี้ไม่ได้อยู่ในสถานะยกเลิกแล้ว หรือถูกลบไปแล้ว กรุณาโหลดหน้าใหม่",
+      };
+    }
+  } catch (err) {
+    console.error("[deleteCancelledOrder]", err instanceof Error ? err.message : err);
+    return { ok: false, message: "ลบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง" };
+  }
+
+  redirect("/admin?status=cancelled");
+}
+
 /** จำนวนออเดอร์ที่เข้ามาหลังเวลาที่กำหนด (ใช้แจ้งเตือนออเดอร์ใหม่ทุก 30 วินาที) */
 export async function checkNewOrders(
   sinceIso: unknown,

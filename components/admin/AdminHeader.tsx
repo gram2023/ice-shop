@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { signOut } from "@/app/admin/actions";
-import { shopConfig } from "@/lib/shop-config";
+import { getShopProfile } from "@/lib/shop-profile-server";
 import { IceIcon } from "../icons";
 import AdminNav from "./AdminNav";
 import NewOrderWatcher from "./NewOrderWatcher";
@@ -11,7 +11,8 @@ type Props = {
   newOrdersSince?: string;
 };
 
-export default function AdminHeader({ email, newOrdersSince }: Props) {
+export default async function AdminHeader({ email, newOrdersSince }: Props) {
+  const shop = await getShopProfile();
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4">
@@ -20,7 +21,7 @@ export default function AdminHeader({ email, newOrdersSince }: Props) {
           className="flex min-w-0 items-center gap-2 rounded-lg font-bold text-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           <IceIcon className="size-6 shrink-0 text-blue-600" />
-          <span className="truncate">{shopConfig.name}</span>
+          <span className="truncate">{shop.name}</span>
           <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
             แอดมิน
           </span>

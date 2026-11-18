@@ -13,9 +13,10 @@ import {
   type FieldErrors,
 } from "@/lib/checkout";
 import { formatPrice } from "@/lib/format";
+import { formatDuration, scheduleFrom } from "@/lib/delivery";
 import { ORDER_LIMITS, PAYMENT_METHODS } from "@/lib/order-rules";
-import { shopConfig } from "@/lib/shop-config";
 import { AlertIcon } from "../icons";
+import { useShopProfile } from "../ShopProfileProvider";
 import DeliverySlotPicker from "./DeliverySlotPicker";
 import { describedBy, Field, FieldError, inputClass } from "../form-fields";
 
@@ -44,6 +45,7 @@ function readField(form: FormData, name: string) {
 
 /** ฟอร์มกรอกข้อมูลผู้สั่ง + วันเวลาจัดส่ง + วิธีชำระเงิน */
 export default function CheckoutForm({ lines, total }: Props) {
+  const shop = useShopProfile();
   const [errors, setErrors] = useState<FieldErrors>({});
   const [message, setMessage] = useState<{
     text: string;
@@ -89,7 +91,7 @@ export default function CheckoutForm({ lines, total }: Props) {
       items: lines,
     };
 
-    const checked = validateCheckout(input, Date.now());
+    const checked = validateCheckout(input, Date.now(), scheduleFrom(shop));
     if (!checked.ok) {
       showErrors(checked.errors, "กรุณาตรวจสอบข้อมูลที่กรอกอีกครั้ง");
       return;
@@ -182,8 +184,9 @@ export default function CheckoutForm({ lines, total }: Props) {
             วันและเวลาจัดส่ง
           </h2>
           <p className="text-sm text-slate-500">
-            สั่งล่วงหน้าอย่างน้อย {shopConfig.orderRules.deliveryLeadMinutes / 60}{" "}
-            ชั่วโมง ภายในเวลาเปิดร้าน
+            {shop.delivery.leadMinutes > 0
+              ? `สั่งล่วงหน้าอย่างน้อย ${formatDuration(shop.delivery.leadMinutes)} ภายในเวลาเปิดร้าน`
+              : "เลือกได้ภายในเวลาเปิดร้าน"}
           </p>
         </div>
         <DeliverySlotPicker

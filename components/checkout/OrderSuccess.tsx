@@ -86,9 +86,16 @@ export default function OrderSuccess({
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row">
+        {/* ส่งเฉพาะเลขออเดอร์ในลิงก์ (ไม่ใส่เบอร์โทร เพราะลิงก์ถูกเก็บในประวัติ/ล็อก) */}
+        <Link
+          href={`/track?order=${encodeURIComponent(order.orderNo)}`}
+          className="flex h-12 flex-1 items-center justify-center rounded-full bg-blue-600 px-6 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        >
+          ติดตามออเดอร์
+        </Link>
         <Link
           href="/products"
-          className="flex h-12 flex-1 items-center justify-center rounded-full bg-blue-600 px-6 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="flex h-12 flex-1 items-center justify-center rounded-full border border-sky-200 bg-white px-6 font-semibold text-blue-900 hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           สั่งซื้อเพิ่ม
         </Link>

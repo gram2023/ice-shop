@@ -11,6 +11,7 @@ const menuItems = [
   { href: "/", label: "หน้าหลัก" },
   { href: "/products", label: "สินค้า" },
   { href: "/cart", label: "ตะกร้า" },
+  { href: "/track", label: "ติดตามออเดอร์" },
   { href: "/contact", label: "ติดต่อเรา" },
 ] as const;
 

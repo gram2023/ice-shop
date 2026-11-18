@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { formatOpeningTime, phoneHref, shopConfig } from "@/lib/shop-config";
-import { ChatIcon, ClockIcon, IceIcon, PhoneIcon } from "./icons";
+import { CartIcon, ChatIcon, ClockIcon, IceIcon, PhoneIcon } from "./icons";
 
 export default function Footer() {
   return (
@@ -35,6 +36,15 @@ export default function Footer() {
               <ChatIcon className="size-5 shrink-0 text-sky-300" />
               <span>LINE: {shopConfig.lineId}</span>
             </a>
+          </li>
+          <li>
+            <Link
+              href="/track"
+              className="inline-flex items-center gap-2 hover:text-white hover:underline"
+            >
+              <CartIcon className="size-5 shrink-0 text-sky-300" />
+              <span>ติดตามออเดอร์</span>
+            </Link>
           </li>
         </ul>
 

@@ -5,6 +5,7 @@ import { useRef, useState, useTransition, type FormEvent } from "react";
 import { placeOrder } from "@/app/(shop)/checkout/actions";
 import type { CartLine } from "@/lib/cart";
 import { clearCart, saveLastOrder } from "@/lib/cart-store";
+import { rememberOrder } from "@/lib/recent-orders-store";
 import {
   validateCheckout,
   type CheckoutField,
@@ -101,6 +102,7 @@ export default function CheckoutForm({ lines, total }: Props) {
       const result = await placeOrder(input);
       if (result.ok) {
         saveLastOrder(result.order);
+        rememberOrder(result.order.orderNo); // จำเลขออเดอร์ไว้ให้หน้าติดตามออเดอร์
         clearCart();
         window.scrollTo({ top: 0 });
         return;

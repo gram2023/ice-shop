@@ -13,7 +13,7 @@ type HeadingLevel = 2 | 3;
 function ProductOrderCard({ product, headingLevel }: { product: Product; headingLevel: HeadingLevel }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-stone-200 bg-white transition duration-200 hover:shadow-lg hover:shadow-forest-950/15 motion-safe:hover:-translate-y-1">
+    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-stone-200 bg-white transition duration-350 hover:shadow-lg hover:shadow-forest-950/15 motion-safe:hover:-translate-y-1">
       {/* มือถือ: รูปเล็กด้านซ้าย / จอใหญ่: รูปเต็มความกว้างด้านบน */}
       <div className="flex gap-3 p-3 sm:flex-col sm:gap-0 sm:p-0">
         <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-stone-100 sm:aspect-4/3 sm:h-auto sm:w-full sm:rounded-none">

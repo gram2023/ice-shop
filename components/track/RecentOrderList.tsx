@@ -16,8 +16,8 @@ export default function RecentOrderList({ selectedOrderNo, onPick }: Props) {
   const current = selectedOrderNo.trim().toUpperCase();
 
   return (
-    <div className="rounded-xl bg-sky-50 p-4">
-      <p id="recent-orders-label" className="font-semibold text-blue-950">
+    <div className="rounded-xl bg-stone-100 p-4">
+      <p id="recent-orders-label" className="font-semibold text-forest-900">
         ออเดอร์ล่าสุดในเครื่องนี้
       </p>
       <p className="text-xs text-slate-500">
@@ -31,15 +31,15 @@ export default function RecentOrderList({ selectedOrderNo, onPick }: Props) {
               key={recent.orderNo}
               className={`flex items-center overflow-hidden rounded-full border ${
                 selected
-                  ? "border-blue-600 bg-blue-600 text-white"
-                  : "border-sky-200 bg-white text-blue-900"
+                  ? "border-forest-700 bg-forest-700 text-white"
+                  : "border-stone-300 bg-white text-forest-900"
               }`}
             >
               <button
                 type="button"
                 onClick={() => onPick(recent.orderNo)}
                 aria-pressed={selected}
-                className="h-10 pr-1 pl-4 text-sm font-semibold tracking-wide focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600"
+                className="h-10 pr-1 pl-4 text-sm font-semibold tracking-wide focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-forest-600"
               >
                 {recent.orderNo}
               </button>
@@ -47,8 +47,8 @@ export default function RecentOrderList({ selectedOrderNo, onPick }: Props) {
                 type="button"
                 onClick={() => forgetOrder(recent.orderNo)}
                 aria-label={`ลบ ${recent.orderNo} ออกจากรายการในเครื่องนี้`}
-                className={`grid size-10 place-items-center text-lg leading-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 ${
-                  selected ? "text-blue-100 hover:text-white" : "text-slate-400 hover:text-red-600"
+                className={`grid size-10 place-items-center text-lg leading-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-forest-600 ${
+                  selected ? "text-forest-100 hover:text-white" : "text-slate-400 hover:text-red-600"
                 }`}
               >
                 ×

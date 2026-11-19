@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import CartView, { CartSkeleton } from "@/components/cart/CartView";
+import PageHeader from "@/components/PageHeader";
 import SectionMessage from "@/components/SectionMessage";
 import { getOrderingData } from "@/lib/data";
 import { getShopProfile } from "@/lib/shop-profile-server";
@@ -31,15 +32,13 @@ async function CartLoader() {
 
 export default function CartPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14">
-      <h1 className="text-3xl font-bold text-blue-950 sm:text-4xl">
-        ตะกร้าสินค้า
-      </h1>
-      <div className="mt-6">
+    <>
+      <PageHeader title="ตะกร้าสินค้า" />
+      <div className="mx-auto max-w-6xl px-4 pt-6 pb-14 sm:px-6">
         <Suspense fallback={<CartSkeleton />}>
           <CartLoader />
         </Suspense>
       </div>
-    </div>
+    </>
   );
 }

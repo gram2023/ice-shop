@@ -37,7 +37,7 @@ const FIELD_IDS: Record<Exclude<CheckoutField, "items">, string> = {
 
 const FIELD_ORDER = Object.keys(FIELD_IDS) as (keyof typeof FIELD_IDS)[];
 
-const sectionClass = "space-y-4 rounded-2xl border border-sky-100 bg-white p-5";
+const sectionClass = "space-y-4 rounded-xl border border-stone-200 bg-white p-5";
 
 function readField(form: FormData, name: string) {
   return String(form.get(name) ?? "");
@@ -116,7 +116,7 @@ export default function CheckoutForm({ lines, total }: Props) {
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
       <section aria-labelledby="customer-heading" className={sectionClass}>
-        <h2 id="customer-heading" className="text-lg font-bold text-blue-950">
+        <h2 id="customer-heading" className="font-display text-lg text-forest-800">
           ข้อมูลผู้สั่ง
         </h2>
 
@@ -180,7 +180,7 @@ export default function CheckoutForm({ lines, total }: Props) {
 
       <section aria-labelledby="delivery-heading" className={sectionClass}>
         <div>
-          <h2 id="delivery-heading" className="text-lg font-bold text-blue-950">
+          <h2 id="delivery-heading" className="font-display text-lg text-forest-800">
             วันและเวลาจัดส่ง
           </h2>
           <p className="text-sm text-slate-500">
@@ -208,7 +208,7 @@ export default function CheckoutForm({ lines, total }: Props) {
             errors.paymentMethod ? `${FIELD_IDS.paymentMethod}-error` : undefined
           }
         >
-          <legend id="payment-heading" className="text-lg font-bold text-blue-950">
+          <legend id="payment-heading" className="font-display text-lg text-forest-800">
             วิธีชำระเงิน
             <span className="text-red-600" aria-hidden="true">
               {" "}
@@ -219,7 +219,7 @@ export default function CheckoutForm({ lines, total }: Props) {
             {PAYMENT_METHODS.map((method, index) => (
               <label
                 key={method.value}
-                className={`flex cursor-pointer items-start gap-3 rounded-xl border bg-white p-4 transition-colors hover:bg-sky-50 has-checked:border-blue-600 has-checked:bg-sky-50 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-600 ${
+                className={`flex cursor-pointer items-start gap-3 rounded-xl border bg-white p-4 transition-colors hover:bg-stone-50 has-checked:border-forest-600 has-checked:bg-forest-50 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-forest-600 ${
                   errors.paymentMethod ? "border-red-500" : "border-slate-300"
                 }`}
               >
@@ -229,10 +229,10 @@ export default function CheckoutForm({ lines, total }: Props) {
                   name="paymentMethod"
                   value={method.value}
                   onChange={() => clearError("paymentMethod")}
-                  className="mt-1 size-5 shrink-0 accent-blue-600"
+                  className="mt-1 size-5 shrink-0 accent-forest-600"
                 />
                 <span>
-                  <span className="block font-semibold text-blue-950">
+                  <span className="block font-semibold text-forest-900">
                     {method.label}
                   </span>
                   <span className="text-sm text-slate-500">{method.hint}</span>
@@ -264,7 +264,7 @@ export default function CheckoutForm({ lines, total }: Props) {
             ref={messageRef}
             tabIndex={-1}
             role="alert"
-            className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-red-900 focus:outline-2 focus:outline-red-400"
+            className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900 focus:outline-2 focus:outline-red-400"
           >
             <AlertIcon className="size-6 shrink-0 text-red-600" />
             <div>
@@ -288,7 +288,7 @@ export default function CheckoutForm({ lines, total }: Props) {
         <button
           type="submit"
           disabled={pending}
-          className="flex h-14 w-full items-center justify-center rounded-full bg-blue-600 px-6 text-lg font-bold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-wait disabled:bg-blue-400"
+          className="flex h-14 w-full items-center justify-center rounded-lg bg-ember-600 px-6 text-lg font-display text-white transition-colors hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 disabled:cursor-wait disabled:bg-ember-500"
         >
           {pending ? "กำลังส่งคำสั่งซื้อ…" : `ยืนยันสั่งซื้อ · ${formatPrice(total)}`}
         </button>

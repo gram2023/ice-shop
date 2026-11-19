@@ -13,16 +13,16 @@ export default function SectionMessage({ variant, children }: Props) {
   return (
     <div
       role={isError ? "alert" : "status"}
-      className={`flex items-start gap-3 rounded-2xl border p-4 text-base ${
+      className={`flex items-start gap-3 rounded-xl border p-4 text-base ${
         isError
           ? "border-amber-200 bg-amber-50 text-amber-900"
-          : "border-sky-100 bg-sky-50 text-slate-600"
+          : "border-stone-200 bg-stone-100 text-slate-600"
       }`}
     >
       {isError ? (
         <AlertIcon className="size-6 shrink-0 text-amber-600" />
       ) : (
-        <IceIcon className="size-6 shrink-0 text-sky-500" />
+        <IceIcon className="size-6 shrink-0 text-forest-600" />
       )}
       <div>{children}</div>
     </div>

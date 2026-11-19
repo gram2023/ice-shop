@@ -50,7 +50,7 @@ function StatusSteps({ current }: { current: number }) {
                 done
                   ? "bg-green-600 text-white"
                   : isCurrent
-                    ? "bg-blue-600 text-white ring-4 ring-blue-100"
+                    ? "bg-sun-400 text-forest-950 ring-4 ring-sun-200"
                     : "bg-slate-200 text-slate-500"
               }`}
             >
@@ -60,7 +60,7 @@ function StatusSteps({ current }: { current: number }) {
               <span
                 className={`block ${
                   isCurrent
-                    ? "font-bold text-blue-900"
+                    ? "font-bold text-forest-900"
                     : done
                       ? "font-medium text-slate-700"
                       : "text-slate-400"
@@ -68,7 +68,7 @@ function StatusSteps({ current }: { current: number }) {
               >
                 {step.label}
               </span>
-              {isCurrent && <span className="text-sm font-semibold text-blue-700">สถานะตอนนี้</span>}
+              {isCurrent && <span className="text-sm font-semibold text-forest-700">สถานะตอนนี้</span>}
             </span>
           </li>
         );
@@ -89,13 +89,13 @@ export default function TrackResult({ order, updatedAt, headingRef, onReset }: P
 
   return (
     <section aria-labelledby="track-heading" className="space-y-5">
-      <div className="rounded-2xl border border-sky-100 bg-white p-5">
+      <div className="rounded-xl border border-stone-200 bg-white p-5">
         <p className="text-sm text-slate-500">เลขที่คำสั่งซื้อ</p>
         <h2
           id="track-heading"
           ref={headingRef}
           tabIndex={-1}
-          className="text-2xl font-extrabold tracking-wide text-blue-950 focus:outline-none"
+          className="text-2xl font-extrabold tracking-wide text-forest-900 focus:outline-none"
         >
           {order.orderNo}
         </h2>
@@ -104,8 +104,8 @@ export default function TrackResult({ order, updatedAt, headingRef, onReset }: P
         )}
       </div>
 
-      <div className="rounded-2xl border border-sky-100 bg-white p-5">
-        <h3 className="mb-4 text-lg font-bold text-blue-950">สถานะคำสั่งซื้อ</h3>
+      <div className="rounded-xl border border-stone-200 bg-white p-5">
+        <h3 className="mb-4 font-display text-lg text-forest-800">สถานะคำสั่งซื้อ</h3>
         {/* ประกาศให้โปรแกรมอ่านหน้าจอเฉพาะตอนสถานะเปลี่ยน (ไม่รวมเวลาอัปเดตที่เปลี่ยนทุกนาที) */}
         <div aria-live="polite">
         {cancelled ? (
@@ -132,8 +132,8 @@ export default function TrackResult({ order, updatedAt, headingRef, onReset }: P
         </p>
       </div>
 
-      <div className="space-y-3 rounded-2xl border border-sky-100 bg-white p-5">
-        <h3 className="text-lg font-bold text-blue-950">รายละเอียด</h3>
+      <div className="space-y-3 rounded-xl border border-stone-200 bg-white p-5">
+        <h3 className="font-display text-lg text-forest-800">รายละเอียด</h3>
         <dl className="space-y-1">
           <div className="flex flex-wrap gap-x-2">
             <dt className="text-slate-600">จัดส่ง:</dt>
@@ -156,7 +156,7 @@ export default function TrackResult({ order, updatedAt, headingRef, onReset }: P
               : `ถ้าชำระเงินแล้ว แจ้งร้านพร้อมเลขคำสั่งซื้อที่เบอร์ ${shop.phone} ได้เลย`}
           </p>
         )}
-        <ul className="divide-y divide-sky-100 border-y border-sky-100">
+        <ul className="divide-y divide-stone-200 border-y border-stone-200">
           {order.items.map((item, i) => (
             <li key={i} className="flex justify-between gap-3 py-2">
               <span className="text-slate-700">
@@ -178,13 +178,13 @@ export default function TrackResult({ order, updatedAt, headingRef, onReset }: P
         <button
           type="button"
           onClick={onReset}
-          className="h-12 rounded-full border border-sky-200 bg-white px-5 font-semibold text-blue-900 hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="h-12 rounded-lg border border-stone-300 bg-white px-5 font-semibold text-forest-900 hover:bg-stone-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
         >
           ค้นหาออเดอร์อื่น
         </button>
         <a
           href={telHref(shop.phone)}
-          className="flex h-12 items-center justify-center gap-2 rounded-full bg-blue-600 px-5 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-forest-700 px-5 font-semibold text-white hover:bg-forest-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-700"
         >
           <PhoneIcon className="size-5" />
           โทรถามร้าน
@@ -194,7 +194,7 @@ export default function TrackResult({ order, updatedAt, headingRef, onReset }: P
             href={line.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-12 items-center justify-center gap-2 rounded-full bg-green-700 px-5 font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+            className="flex h-12 items-center justify-center gap-2 rounded-lg bg-green-700 px-5 font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
           >
             <ChatIcon className="size-5" />
             LINE ร้าน

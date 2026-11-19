@@ -30,7 +30,7 @@ export default function OrderSuccess({
 
   return (
     <section aria-labelledby="success-heading" className="mx-auto max-w-2xl space-y-5">
-      <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-center">
+      <div className="rounded-xl border border-green-200 bg-green-50 p-6 text-center">
         <CheckIcon className="mx-auto size-14 text-green-600" />
         <h2
           id="success-heading"
@@ -42,7 +42,7 @@ export default function OrderSuccess({
         </h2>
         <p className="mt-1 text-green-800">ร้านจะโทรยืนยันคำสั่งซื้อก่อนจัดส่ง</p>
         <p className="mt-5 text-sm text-slate-600">เลขที่คำสั่งซื้อ</p>
-        <p className="text-3xl font-extrabold tracking-wide text-blue-950">
+        <p className="text-3xl font-extrabold tracking-wide text-forest-900">
           {order.orderNo}
         </p>
         <p className="mt-1 text-sm text-slate-500">กรุณาจดหรือแคปหน้าจอนี้ไว้</p>
@@ -50,8 +50,8 @@ export default function OrderSuccess({
 
       <PaymentInstructions order={order} payment={payment} />
 
-      <div className="space-y-4 rounded-2xl border border-sky-100 bg-white p-5">
-        <h3 className="text-lg font-bold text-blue-950">รายละเอียดคำสั่งซื้อ</h3>
+      <div className="space-y-4 rounded-xl border border-stone-200 bg-white p-5">
+        <h3 className="font-display text-lg text-forest-800">รายละเอียดคำสั่งซื้อ</h3>
         <dl className="space-y-1 text-base">
           <div className="flex flex-wrap gap-x-2">
             <dt className="text-slate-600">จัดส่ง:</dt>
@@ -66,7 +66,7 @@ export default function OrderSuccess({
             </dd>
           </div>
         </dl>
-        <ul className="divide-y divide-sky-100 border-y border-sky-100">
+        <ul className="divide-y divide-stone-200 border-y border-stone-200">
           {order.items.map((item, i) => (
             <li key={i} className="flex justify-between gap-3 py-2">
               <span className="text-slate-700">
@@ -90,19 +90,19 @@ export default function OrderSuccess({
         {/* ส่งเฉพาะเลขออเดอร์ในลิงก์ (ไม่ใส่เบอร์โทร เพราะลิงก์ถูกเก็บในประวัติ/ล็อก) */}
         <Link
           href={`/track?order=${encodeURIComponent(order.orderNo)}`}
-          className="flex h-12 flex-1 items-center justify-center rounded-full bg-blue-600 px-6 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="flex h-12 flex-1 items-center justify-center rounded-lg bg-ember-600 px-6 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
         >
           ติดตามออเดอร์
         </Link>
         <Link
           href="/products"
-          className="flex h-12 flex-1 items-center justify-center rounded-full border border-sky-200 bg-white px-6 font-semibold text-blue-900 hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="flex h-12 flex-1 items-center justify-center rounded-lg border border-stone-300 bg-white px-6 font-semibold text-forest-900 hover:bg-stone-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
         >
           สั่งซื้อเพิ่ม
         </Link>
         <Link
           href="/"
-          className="flex h-12 flex-1 items-center justify-center rounded-full border border-sky-200 bg-white px-6 font-semibold text-blue-900 hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="flex h-12 flex-1 items-center justify-center rounded-lg border border-stone-300 bg-white px-6 font-semibold text-forest-900 hover:bg-stone-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
         >
           กลับหน้าหลัก
         </Link>
@@ -126,10 +126,10 @@ function PaymentInstructions({
 
   if (order.paymentMethod === "cod") {
     return (
-      <div className="rounded-2xl border border-sky-100 bg-sky-50 p-5">
-        <h3 className="text-lg font-bold text-blue-950">การชำระเงิน</h3>
+      <div className="rounded-xl border border-stone-200 bg-stone-100 p-5">
+        <h3 className="font-display text-lg text-forest-800">การชำระเงิน</h3>
         <p className="mt-1 text-slate-700">
-          ชำระเงินสด <strong className="text-blue-950">{amount}</strong>{" "}
+          ชำระเงินสด <strong className="text-forest-900">{amount}</strong>{" "}
           กับพนักงานเมื่อได้รับน้ำแข็ง
         </p>
       </div>
@@ -144,9 +144,9 @@ function PaymentInstructions({
     : Boolean(payment.promptPayId || payment.promptPayQrUrl);
 
   return (
-    <div className="space-y-4 rounded-2xl border border-sky-100 bg-sky-50 p-5">
+    <div className="space-y-4 rounded-xl border border-stone-200 bg-stone-100 p-5">
       <div>
-        <h3 className="text-lg font-bold text-blue-950">ชำระเงิน {amount}</h3>
+        <h3 className="font-display text-lg text-forest-800">ชำระเงิน {amount}</h3>
         <p className="text-sm text-slate-600">
           {ready
             ? `ชำระแล้วแจ้งร้านทาง${channel} พร้อมเลขคำสั่งซื้อ ${order.orderNo}`
@@ -170,7 +170,7 @@ function PaymentInstructions({
           )}
           <div className="flex flex-wrap items-baseline gap-x-2">
             <dt className="text-slate-600">เลขที่บัญชี:</dt>
-            <dd className="text-xl font-bold tracking-wide text-blue-950">
+            <dd className="text-xl font-bold tracking-wide text-forest-900">
               {payment.accountNumber}
             </dd>
           </div>
@@ -193,7 +193,7 @@ function PaymentInstructions({
           {payment.promptPayId && (
             <>
               <p className="mt-2 text-slate-600">พร้อมเพย์</p>
-              <p className="text-xl font-bold tracking-wide text-blue-950">
+              <p className="text-xl font-bold tracking-wide text-forest-900">
                 {payment.promptPayId}
               </p>
             </>
@@ -209,7 +209,7 @@ function PaymentInstructions({
           href={line.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-green-700 px-6 py-2 text-center font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-green-700 px-6 py-2 text-center font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
         >
           <ChatIcon className="size-6 shrink-0" />
           {ready ? `ส่งสลิปทาง LINE (${line.id})` : `ทัก LINE เพื่อรับ${what} (${line.id})`}
@@ -217,7 +217,7 @@ function PaymentInstructions({
       ) : (
         <a
           href={telHref(shop.phone)}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-2 text-center font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-forest-700 px-6 py-2 text-center font-semibold text-white hover:bg-forest-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-700"
         >
           <PhoneIcon className="size-6 shrink-0" />
           โทรหาร้าน {shop.phone}

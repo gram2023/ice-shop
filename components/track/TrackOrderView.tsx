@@ -124,7 +124,7 @@ export default function TrackOrderView({ initialOrderNo }: { initialOrderNo: str
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="space-y-4 rounded-2xl border border-sky-100 bg-white p-5"
+      className="space-y-4 rounded-xl border border-stone-200 bg-white p-5"
     >
       <RecentOrderList selectedOrderNo={orderNoValue} onPick={pickRecent} />
 
@@ -182,7 +182,7 @@ export default function TrackOrderView({ initialOrderNo }: { initialOrderNo: str
       <button
         type="submit"
         disabled={pending}
-        className="flex h-14 w-full items-center justify-center rounded-full bg-blue-600 px-6 text-lg font-bold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-wait disabled:bg-blue-400"
+        className="flex h-14 w-full items-center justify-center rounded-lg bg-ember-600 px-6 text-lg font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 disabled:cursor-wait disabled:bg-ember-500"
       >
         {pending ? "กำลังค้นหา…" : "ดูสถานะออเดอร์"}
       </button>

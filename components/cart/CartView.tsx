@@ -25,7 +25,7 @@ type Props = {
 const SUMMARY_HEADING_ID = "cart-summary-heading";
 
 const primaryButton =
-  "flex h-14 w-full items-center justify-center rounded-full bg-blue-600 px-6 text-lg font-bold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
+  "flex h-14 w-full items-center justify-center rounded-lg bg-ember-600 px-6 text-lg font-display text-white transition-colors hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600";
 
 export default function CartView({ products, settings }: Props) {
   const lines = useCartLines();
@@ -49,7 +49,7 @@ export default function CartView({ products, settings }: Props) {
           </SectionMessage>
         )}
 
-        <ul className="divide-y divide-sky-100 rounded-2xl border border-sky-100 bg-white">
+        <ul className="divide-y divide-stone-200 rounded-xl border border-stone-200 bg-white">
           {rows.map((row) =>
             row.product ? (
               <li key={row.line.productId} className="flex gap-3 p-4">
@@ -63,7 +63,7 @@ export default function CartView({ products, settings }: Props) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h2 className="font-bold text-blue-950">
+                      <h2 className="font-bold text-forest-900">
                         {row.product.name}
                       </h2>
                       <p className="text-sm text-slate-500">
@@ -83,7 +83,7 @@ export default function CartView({ products, settings }: Props) {
                       onChange={(q) => setCartQuantity(row.line.productId, q)}
                       label={`จำนวน ${row.product.name}`}
                     />
-                    <p className="text-lg font-bold text-blue-700">
+                    <p className="text-lg font-bold text-forest-700">
                       {formatPrice(lineTotal(row.product.price, row.line.quantity))}
                     </p>
                   </div>
@@ -111,7 +111,7 @@ export default function CartView({ products, settings }: Props) {
 
         <Link
           href="/products"
-          className="inline-flex min-h-12 items-center rounded-full px-1 font-semibold text-blue-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="inline-flex min-h-12 items-center rounded-lg px-1 font-semibold text-forest-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
         >
           + เลือกสินค้าเพิ่ม
         </Link>
@@ -119,12 +119,12 @@ export default function CartView({ products, settings }: Props) {
 
       <aside
         aria-labelledby={SUMMARY_HEADING_ID}
-        className="space-y-4 rounded-2xl border border-sky-100 bg-sky-50 p-5 lg:sticky lg:top-24"
+        className="space-y-4 rounded-xl border border-stone-200 bg-stone-100 p-5 lg:sticky lg:top-24"
       >
         <h2
           id={SUMMARY_HEADING_ID}
           tabIndex={-1}
-          className="text-lg font-bold text-blue-950 focus:outline-none"
+          className="font-display text-lg text-forest-800 focus:outline-none"
         >
           สรุปยอด
         </h2>
@@ -159,7 +159,7 @@ function RemoveButton({ productId, name }: { productId: string; name: string }) 
         );
       }}
       aria-label={`ลบ ${name} ออกจากตะกร้า`}
-      className="grid size-11 shrink-0 place-items-center rounded-xl text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+      className="grid size-11 shrink-0 place-items-center rounded-xl text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
     >
       <TrashIcon className="size-5" />
     </button>
@@ -170,16 +170,16 @@ function EmptyCart() {
   return (
     <div
       role="status"
-      className="flex flex-col items-center rounded-2xl border border-sky-100 bg-sky-50 px-4 py-14 text-center"
+      className="flex flex-col items-center rounded-xl border border-stone-200 bg-stone-100 px-4 py-14 text-center"
     >
-      <span className="grid size-16 place-items-center rounded-2xl bg-white text-sky-500">
+      <span className="grid size-16 place-items-center rounded-xl bg-white text-forest-600">
         <CartIcon className="size-8" />
       </span>
-      <p className="mt-4 text-lg font-semibold text-blue-950">ตะกร้ายังว่างอยู่</p>
+      <p className="mt-4 text-lg font-semibold text-forest-900">ตะกร้ายังว่างอยู่</p>
       <p className="mt-1 text-slate-600">เลือกน้ำแข็งที่ต้องการแล้วกด “ใส่ตะกร้า”</p>
       <Link
         href="/products"
-        className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-blue-600 px-8 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-ember-600 px-8 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
       >
         เลือกสินค้า
       </Link>
@@ -194,18 +194,18 @@ export function CartSkeleton() {
       aria-busy="true"
       aria-label="กำลังโหลดตะกร้า"
     >
-      <div className="space-y-3 rounded-2xl border border-sky-100 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-stone-200 bg-white p-4">
         {Array.from({ length: 2 }, (_, i) => (
           <div key={i} className="flex gap-3" aria-hidden="true">
-            <div className="size-16 animate-pulse rounded-xl bg-sky-100" />
+            <div className="size-16 animate-pulse rounded-xl bg-stone-200" />
             <div className="flex-1 space-y-2">
-              <div className="h-5 w-1/2 animate-pulse rounded bg-sky-100" />
-              <div className="h-11 w-36 animate-pulse rounded-xl bg-sky-50" />
+              <div className="h-5 w-1/2 animate-pulse rounded bg-stone-200" />
+              <div className="h-11 w-36 animate-pulse rounded-xl bg-stone-100" />
             </div>
           </div>
         ))}
       </div>
-      <div className="h-56 animate-pulse rounded-2xl bg-sky-50" aria-hidden="true" />
+      <div className="h-56 animate-pulse rounded-xl bg-stone-100" aria-hidden="true" />
     </div>
   );
 }

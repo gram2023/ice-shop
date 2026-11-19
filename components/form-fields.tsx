@@ -4,7 +4,7 @@ import { AlertIcon } from "./icons";
 /** ส่วนประกอบของช่องกรอกในฟอร์มสั่งซื้อ (label / คำอธิบาย / ข้อความผิดพลาด) */
 
 export function inputClass(hasError: boolean) {
-  return `block w-full rounded-xl border bg-white px-4 py-3 text-base text-slate-900 placeholder:text-slate-400 focus:outline-2 focus:outline-offset-0 focus:outline-blue-500 disabled:bg-slate-50 disabled:text-slate-400 ${
+  return `block w-full rounded-lg border bg-white px-4 py-3 text-base text-slate-900 placeholder:text-slate-400 focus:outline-2 focus:outline-offset-0 focus:outline-forest-600 disabled:bg-slate-50 disabled:text-slate-400 ${
     hasError ? "border-red-500" : "border-slate-300"
   }`;
 }
@@ -47,7 +47,7 @@ export function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block font-semibold text-blue-950">
+      <label htmlFor={id} className="block font-semibold text-forest-900">
         {label}
         {optional ? (
           <span className="font-normal text-slate-500"> (ไม่บังคับ)</span>

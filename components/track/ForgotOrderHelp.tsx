@@ -10,15 +10,15 @@ export default function ForgotOrderHelp() {
   const hasLine = Boolean(shop.lineId && shop.lineUrl);
 
   return (
-    <div className="border-t border-sky-100 pt-4">
-      <p className="font-semibold text-blue-950">ลืมเลขออเดอร์?</p>
+    <div className="border-t border-stone-200 pt-4">
+      <p className="font-semibold text-forest-900">ลืมเลขออเดอร์?</p>
       <p className="text-sm text-slate-600">
         {hasLine ? "โทรหรือทัก LINE ร้าน" : "โทรหาร้าน"} แจ้งเบอร์โทรที่ใช้สั่งซื้อ ร้านจะเช็คสถานะให้
       </p>
       <div className={`mt-3 grid gap-2 ${hasLine ? "sm:grid-cols-2" : ""}`}>
         <a
           href={telHref(shop.phone)}
-          className="flex h-11 items-center justify-center gap-2 rounded-full border border-sky-200 bg-white px-4 font-semibold text-blue-900 hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="flex h-11 items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-4 font-semibold text-forest-900 hover:bg-stone-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
         >
           <PhoneIcon className="size-5" />
           โทร {shop.phone}
@@ -28,7 +28,7 @@ export default function ForgotOrderHelp() {
             href={shop.lineUrl ?? undefined}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-11 items-center justify-center gap-2 rounded-full bg-green-700 px-4 font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+            className="flex h-11 items-center justify-center gap-2 rounded-lg bg-green-700 px-4 font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
           >
             <ChatIcon className="size-5" />
             LINE {shop.lineId}

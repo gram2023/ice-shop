@@ -32,7 +32,7 @@ export default function OrderTotals({
           {deliveryFee === 0 ? "ส่งฟรี" : formatPrice(deliveryFee)}
         </dd>
       </div>
-      <div className="flex justify-between gap-4 border-t border-sky-200 pt-3 text-lg font-bold text-blue-950">
+      <div className="flex justify-between gap-4 border-t border-stone-300 pt-3 text-lg font-bold text-forest-900">
         <dt>รวมทั้งหมด</dt>
         <dd>{formatPrice(total)}</dd>
       </div>
@@ -51,14 +51,14 @@ export function FreeShippingHint({
   if (remaining === null) return null;
   if (remaining <= 0) {
     return (
-      <p className="rounded-xl bg-green-50 px-3 py-2 text-sm font-medium text-green-800">
+      <p className="rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-800">
         ✓ ได้รับสิทธิ์ส่งฟรี (สั่งครบ {minQty} ถุง)
       </p>
     );
   }
   return (
-    <p className="rounded-xl bg-white px-3 py-2 text-sm text-slate-700">
-      สั่งเพิ่มอีก <strong className="text-blue-700">{remaining} ถุง</strong>{" "}
+    <p className="rounded-lg bg-white px-3 py-2 text-sm text-slate-700">
+      สั่งเพิ่มอีก <strong className="text-forest-700">{remaining} ถุง</strong>{" "}
       ส่งฟรี!
     </p>
   );

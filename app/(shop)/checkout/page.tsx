@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import CheckoutView, {
   CheckoutSkeleton,
 } from "@/components/checkout/CheckoutView";
+import PageHeader from "@/components/PageHeader";
 import SectionMessage from "@/components/SectionMessage";
 import { getOrderingData } from "@/lib/data";
 import { getShopProfile } from "@/lib/shop-profile-server";
@@ -33,15 +34,13 @@ async function CheckoutLoader() {
 
 export default function CheckoutPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14">
-      <h1 className="text-3xl font-bold text-blue-950 sm:text-4xl">
-        สั่งซื้อน้ำแข็ง
-      </h1>
-      <div className="mt-6">
+    <>
+      <PageHeader title="สั่งซื้อน้ำแข็ง" />
+      <div className="mx-auto max-w-6xl px-4 pt-6 pb-14 sm:px-6">
         <Suspense fallback={<CheckoutSkeleton />}>
           <CheckoutLoader />
         </Suspense>
       </div>
-    </div>
+    </>
   );
 }

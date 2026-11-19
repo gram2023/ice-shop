@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import PageHeader from "@/components/PageHeader";
 import TrackOrderView from "@/components/track/TrackOrderView";
 import { getShopProfile } from "@/lib/shop-profile-server";
 import { isValidOrderNo, normalizeOrderNo } from "@/lib/tracking";
@@ -23,16 +24,17 @@ async function TrackWithPrefill({ searchParams }: { searchParams: SearchParams }
 
 export default function TrackPage({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 md:py-14">
-      <h1 className="text-3xl font-bold text-blue-950 sm:text-4xl">ติดตามออเดอร์</h1>
-      <p className="mt-2 text-lg text-slate-600">
-        กรอกเลขออเดอร์และเบอร์โทรที่ใช้ตอนสั่งซื้อ
-      </p>
-      <div className="mt-6">
+    <>
+      <PageHeader
+        title="ติดตามออเดอร์"
+        description="กรอกเลขออเดอร์และเบอร์โทรที่ใช้ตอนสั่งซื้อ"
+        width="narrow"
+      />
+      <div className="mx-auto max-w-2xl px-4 pt-6 pb-14 sm:px-6">
         <Suspense fallback={<TrackOrderView initialOrderNo="" />}>
           <TrackWithPrefill searchParams={searchParams} />
         </Suspense>
       </div>
-    </div>
+    </>
   );
 }

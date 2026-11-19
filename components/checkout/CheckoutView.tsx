@@ -42,7 +42,7 @@ export default function CheckoutView({ products, settings }: Props) {
         </SectionMessage>
         <Link
           href="/cart"
-          className="inline-flex h-12 items-center justify-center rounded-full bg-blue-600 px-8 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="inline-flex h-12 items-center justify-center rounded-lg bg-ember-600 px-8 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
         >
           กลับไปแก้ตะกร้า
         </Link>
@@ -61,18 +61,18 @@ export default function CheckoutView({ products, settings }: Props) {
       {/* สรุปรายการ: มือถืออยู่ด้านบน / จอใหญ่อยู่ด้านขวา */}
       <aside
         aria-labelledby="checkout-summary-heading"
-        className="space-y-4 rounded-2xl border border-sky-100 bg-sky-50 p-5 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1"
+        className="space-y-4 rounded-xl border border-stone-200 bg-stone-100 p-5 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1"
       >
         <div className="flex items-center justify-between gap-3">
           <h2
             id="checkout-summary-heading"
-            className="text-lg font-bold text-blue-950"
+            className="font-display text-lg text-forest-800"
           >
             รายการสั่งซื้อ
           </h2>
           <Link
             href="/cart"
-            className="text-sm font-semibold text-blue-700 underline-offset-2 hover:underline"
+            className="text-sm font-semibold text-forest-700 underline-offset-2 hover:underline"
           >
             แก้ไขตะกร้า
           </Link>
@@ -110,16 +110,16 @@ function EmptyCheckout() {
   return (
     <div
       role="status"
-      className="flex flex-col items-center rounded-2xl border border-sky-100 bg-sky-50 px-4 py-14 text-center"
+      className="flex flex-col items-center rounded-xl border border-stone-200 bg-stone-100 px-4 py-14 text-center"
     >
-      <span className="grid size-16 place-items-center rounded-2xl bg-white text-sky-500">
+      <span className="grid size-16 place-items-center rounded-xl bg-white text-forest-600">
         <CartIcon className="size-8" />
       </span>
-      <p className="mt-4 text-lg font-semibold text-blue-950">ยังไม่มีสินค้าในตะกร้า</p>
+      <p className="mt-4 text-lg font-semibold text-forest-900">ยังไม่มีสินค้าในตะกร้า</p>
       <p className="mt-1 text-slate-600">เลือกสินค้าก่อน แล้วค่อยกลับมาสั่งซื้อ</p>
       <Link
         href="/products"
-        className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-blue-600 px-8 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-ember-600 px-8 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
       >
         เลือกสินค้า
       </Link>
@@ -135,10 +135,10 @@ export function CheckoutSkeleton() {
       aria-label="กำลังโหลดหน้าสั่งซื้อ"
     >
       <div className="space-y-4" aria-hidden="true">
-        <div className="h-72 animate-pulse rounded-2xl bg-sky-50" />
-        <div className="h-40 animate-pulse rounded-2xl bg-sky-50" />
+        <div className="h-72 animate-pulse rounded-xl bg-stone-100" />
+        <div className="h-40 animate-pulse rounded-xl bg-stone-100" />
       </div>
-      <div className="h-56 animate-pulse rounded-2xl bg-sky-50" aria-hidden="true" />
+      <div className="h-56 animate-pulse rounded-xl bg-stone-100" aria-hidden="true" />
     </div>
   );
 }

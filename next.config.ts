@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // โหมด dev: ให้มือถือในวงแลนบ้าน (192.168.x.x) เปิดทดสอบผ่าน http://<IP เครื่อง>:3000 ได้
+  // ถ้าไม่ใส่ Next.js จะบล็อกสคริปต์ของหน้า → กดอะไรไม่ได้ · ไม่มีผลกับเว็บจริงหลัง deploy
+  allowedDevOrigins: ["192.168.*.*"],
   experimental: {
     agentFeedback: true,
     serverActions: {

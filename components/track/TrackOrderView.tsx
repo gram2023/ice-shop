@@ -182,7 +182,7 @@ export default function TrackOrderView({ initialOrderNo }: { initialOrderNo: str
       <button
         type="submit"
         disabled={pending}
-        className="flex h-14 w-full items-center justify-center rounded-lg bg-ember-600 px-6 text-lg font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 disabled:cursor-wait disabled:bg-ember-500"
+        className="flex h-14 w-full items-center justify-center rounded-lg bg-ember-600 px-6 text-lg font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 disabled:cursor-wait disabled:bg-ember-500 transition motion-safe:active:scale-98"
       >
         {pending ? "กำลังค้นหา…" : "ดูสถานะออเดอร์"}
       </button>

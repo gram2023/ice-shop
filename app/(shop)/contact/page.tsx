@@ -32,7 +32,7 @@ export default async function ContactPage() {
         </section>
 
         {/* แผนที่ */}
-        <section aria-labelledby="map-heading" className="space-y-4">
+        <section aria-labelledby="map-heading" className="reveal space-y-4">
           <h2 id="map-heading" className="font-display text-2xl text-forest-800 uppercase sm:text-3xl">
             แผนที่ร้าน
           </h2>
@@ -40,7 +40,7 @@ export default async function ContactPage() {
         </section>
 
         {/* คำถามที่พบบ่อย */}
-        <section aria-labelledby="faq-heading">
+        <section aria-labelledby="faq-heading" className="reveal">
           <h2 id="faq-heading" className="font-display text-2xl text-forest-800 uppercase sm:text-3xl">
             คำถามที่พบบ่อย
           </h2>

@@ -27,11 +27,17 @@ function formatCount(count: number) {
   return count > 99 ? "99+" : String(count);
 }
 
-/** ตัวเลขจำนวนถุงในตะกร้า ต่อท้ายเมนู "ตะกร้า" */
-function CartBadge({ count }: { count: number }) {
+/**
+ * ตัวเลขจำนวนถุงในตะกร้า ต่อท้ายเมนู "ตะกร้า"
+ * bumpKey เปลี่ยน (= เพิ่งใส่ของเพิ่ม) → สร้างใหม่และเด้ง 1 ครั้ง
+ */
+function CartBadge({ count, bumpKey }: { count: number; bumpKey: number }) {
   if (count <= 0) return null;
   return (
-    <span className="ml-1.5 inline-grid h-6 min-w-6 place-items-center rounded-full bg-sun-400 px-1.5 text-xs font-bold text-forest-950">
+    <span
+      key={bumpKey}
+      className={`${bumpKey > 0 ? "bump " : ""}ml-1.5 inline-grid h-6 min-w-6 place-items-center rounded-full bg-sun-400 px-1.5 text-xs font-bold text-forest-950`}
+    >
       {formatCount(count)}
       <span className="sr-only"> ถุงในตะกร้า</span>
     </span>
@@ -42,7 +48,21 @@ export default function Navbar() {
   const shop = useShopProfile();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const cartCount = cartItemCount(useCartLines());
+  // ไอคอนเมนูหมุนเฉพาะหลังผู้ใช้กด (ไม่หมุนตอนเปิดหน้า)
+  const [menuToggled, setMenuToggled] = useState(false);
+  const lines = useCartLines();
+  const cartCount = cartItemCount(lines);
+
+  // ตัวเลขตะกร้าเด้งเฉพาะเมื่อ "จำนวนเพิ่มขึ้น" หลังโหลดตะกร้าแล้ว (ไม่เด้งตอนเปิดหน้า)
+  // ปรับ state ระหว่าง render ตามแนวทางของ React (ไม่ต้องใช้ effect)
+  const [cartSeen, setCartSeen] = useState<{ count: number | null; bump: number }>({
+    count: null,
+    bump: 0,
+  });
+  if (lines !== null && cartSeen.count !== cartCount) {
+    const increased = cartSeen.count !== null && cartCount > cartSeen.count;
+    setCartSeen({ count: cartCount, bump: increased ? cartSeen.bump + 1 : cartSeen.bump });
+  }
 
   // ปิดเมนูมือถือเมื่อกดปุ่ม Esc
   useEffect(() => {
@@ -95,7 +115,7 @@ export default function Navbar() {
                     }`}
                   >
                     {item.label}
-                    {item.href === "/cart" && <CartBadge count={cartCount} />}
+                    {item.href === "/cart" && <CartBadge count={cartCount} bumpKey={cartSeen.bump} />}
                   </Link>
                 </li>
               );
@@ -104,7 +124,7 @@ export default function Navbar() {
           {/* ปุ่มสั่งซื้อ (เฉพาะจอกว้าง เมนูจะได้ไม่แน่นเกิน) */}
           <Link
             href="/products"
-            className={`hidden h-11 items-center gap-1.5 rounded-lg bg-sun-400 px-5 font-display text-forest-950 transition-colors hover:bg-sun-300 lg:inline-flex ${focusRing}`}
+            className={`hidden h-11 items-center gap-1.5 rounded-lg bg-sun-400 px-5 font-display text-forest-950 transition hover:bg-sun-300 lg:inline-flex  motion-safe:active:scale-98${focusRing}`}
           >
             สั่งซื้อเลย
             <ArrowRightIcon className="size-4" />
@@ -124,8 +144,9 @@ export default function Navbar() {
             <CartIcon className="size-7" />
             {cartCount > 0 && (
               <span
+                key={cartSeen.bump}
                 aria-hidden="true"
-                className="absolute top-1 right-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-sun-400 px-1 text-[11px] font-bold text-forest-950"
+                className={`${cartSeen.bump > 0 ? "bump " : ""}absolute top-1 right-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-sun-400 px-1 text-[11px] font-bold text-forest-950`}
               >
                 {formatCount(cartCount)}
               </span>
@@ -133,16 +154,20 @@ export default function Navbar() {
           </Link>
           <button
             type="button"
-            onClick={() => setOpen((v) => !v)}
+            onClick={() => {
+              setOpen((v) => !v);
+              setMenuToggled(true);
+            }}
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "ปิดเมนู" : "เปิดเมนู"}
             className={`grid size-12 place-items-center rounded-lg hover:bg-white/10 ${focusRing}`}
           >
+            {/* key เปลี่ยน → ไอคอนใหม่หมุนเข้า */}
             {open ? (
-              <CloseIcon className="size-7" />
+              <CloseIcon key="close" className={`${menuToggled ? "spin-in " : ""}size-7`} />
             ) : (
-              <MenuIcon className="size-7" />
+              <MenuIcon key="menu" className={`${menuToggled ? "spin-in " : ""}size-7`} />
             )}
           </button>
         </div>
@@ -168,7 +193,7 @@ export default function Navbar() {
                   }`}
                 >
                   {item.label}
-                  {item.href === "/cart" && <CartBadge count={cartCount} />}
+                  {item.href === "/cart" && <CartBadge count={cartCount} bumpKey={cartSeen.bump} />}
                 </Link>
               </li>
             );

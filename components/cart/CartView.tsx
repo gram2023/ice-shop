@@ -25,7 +25,7 @@ type Props = {
 const SUMMARY_HEADING_ID = "cart-summary-heading";
 
 const primaryButton =
-  "flex h-14 w-full items-center justify-center rounded-lg bg-ember-600 px-6 text-lg font-display text-white transition-colors hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600";
+  "flex h-14 w-full items-center justify-center rounded-lg bg-ember-600 px-6 text-lg font-display text-white transition hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 motion-safe:active:scale-98";
 
 export default function CartView({ products, settings }: Props) {
   const lines = useCartLines();
@@ -179,7 +179,7 @@ function EmptyCart() {
       <p className="mt-1 text-slate-600">เลือกน้ำแข็งที่ต้องการแล้วกด “ใส่ตะกร้า”</p>
       <Link
         href="/products"
-        className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-ember-600 px-8 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
+        className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-ember-600 px-8 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 transition motion-safe:active:scale-98"
       >
         เลือกสินค้า
       </Link>

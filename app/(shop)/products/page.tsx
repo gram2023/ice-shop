@@ -46,7 +46,7 @@ export default function ProductsPage() {
         <div className="mt-8 flex justify-center sm:justify-end">
           <Link
             href="/cart"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-sun-400 px-8 font-display text-lg text-forest-950 transition-colors hover:bg-sun-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-sun-400 px-8 font-display text-lg text-forest-950 transition hover:bg-sun-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 motion-safe:active:scale-98"
           >
             ไปที่ตะกร้า
             <ArrowRightIcon className="size-5" />

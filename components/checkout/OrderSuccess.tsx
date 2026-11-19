@@ -90,7 +90,7 @@ export default function OrderSuccess({
         {/* ส่งเฉพาะเลขออเดอร์ในลิงก์ (ไม่ใส่เบอร์โทร เพราะลิงก์ถูกเก็บในประวัติ/ล็อก) */}
         <Link
           href={`/track?order=${encodeURIComponent(order.orderNo)}`}
-          className="flex h-12 flex-1 items-center justify-center rounded-lg bg-ember-600 px-6 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
+          className="flex h-12 flex-1 items-center justify-center rounded-lg bg-ember-600 px-6 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 transition motion-safe:active:scale-98"
         >
           ติดตามออเดอร์
         </Link>

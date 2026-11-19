@@ -13,7 +13,7 @@ type HeadingLevel = 2 | 3;
 function ProductOrderCard({ product, headingLevel }: { product: Product; headingLevel: HeadingLevel }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-stone-200 bg-white">
+    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-stone-200 bg-white transition duration-200 hover:shadow-lg hover:shadow-forest-950/15 motion-safe:hover:-translate-y-1">
       {/* มือถือ: รูปเล็กด้านซ้าย / จอใหญ่: รูปเต็มความกว้างด้านบน */}
       <div className="flex gap-3 p-3 sm:flex-col sm:gap-0 sm:p-0">
         <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-stone-100 sm:aspect-4/3 sm:h-auto sm:w-full sm:rounded-none">
@@ -48,8 +48,15 @@ function ProductOrderCard({ product, headingLevel }: { product: Product; heading
 /**
  * รายการสินค้าสำหรับสั่งซื้อ (ต้องวางไว้ใน <Suspense>)
  * headingLevel: หน้า /products ชื่อสินค้าเป็น h2 (ใต้ h1) / หน้าแรกเป็น h3 (ใต้หัวข้อส่วน h2)
+ * animate: การ์ดค่อย ๆ โผล่ตอนเลื่อนมาถึง (ใช้ในหน้าแรก)
  */
-export default async function ProductOrderList({ headingLevel = 2 }: { headingLevel?: HeadingLevel }) {
+export default async function ProductOrderList({
+  headingLevel = 2,
+  animate = false,
+}: {
+  headingLevel?: HeadingLevel;
+  animate?: boolean;
+}) {
   const [result, shop] = await Promise.all([getActiveProducts(), getShopProfile()]);
 
   if (!result.ok) {
@@ -70,7 +77,7 @@ export default async function ProductOrderList({ headingLevel = 2 }: { headingLe
   return (
     <ul className={gridClass}>
       {result.data.map((product) => (
-        <li key={product.id}>
+        <li key={product.id} className={animate ? "reveal" : undefined}>
           <ProductOrderCard product={product} headingLevel={headingLevel} />
         </li>
       ))}

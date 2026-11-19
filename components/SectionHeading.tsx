@@ -22,7 +22,7 @@ export default function SectionHeading({
 }: Props) {
   const dark = tone === "dark";
   return (
-    <div className={align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
+    <div className={`reveal ${align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}`}>
       <p className={`text-sm font-semibold ${dark ? "text-sun-400" : "text-ember-600"}`}>{eyebrow}</p>
       <h2
         id={id}

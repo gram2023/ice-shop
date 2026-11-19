@@ -288,7 +288,7 @@ export default function CheckoutForm({ lines, total }: Props) {
         <button
           type="submit"
           disabled={pending}
-          className="flex h-14 w-full items-center justify-center rounded-lg bg-ember-600 px-6 text-lg font-display text-white transition-colors hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 disabled:cursor-wait disabled:bg-ember-500"
+          className="flex h-14 w-full items-center justify-center rounded-lg bg-ember-600 px-6 text-lg font-display text-white transition hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 disabled:cursor-wait disabled:bg-ember-500 motion-safe:active:scale-98"
         >
           {pending ? "กำลังส่งคำสั่งซื้อ…" : `ยืนยันสั่งซื้อ · ${formatPrice(total)}`}
         </button>

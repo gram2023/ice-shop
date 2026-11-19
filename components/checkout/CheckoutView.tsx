@@ -42,7 +42,7 @@ export default function CheckoutView({ products, settings }: Props) {
         </SectionMessage>
         <Link
           href="/cart"
-          className="inline-flex h-12 items-center justify-center rounded-lg bg-ember-600 px-8 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
+          className="inline-flex h-12 items-center justify-center rounded-lg bg-ember-600 px-8 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 transition motion-safe:active:scale-98"
         >
           กลับไปแก้ตะกร้า
         </Link>
@@ -119,7 +119,7 @@ function EmptyCheckout() {
       <p className="mt-1 text-slate-600">เลือกสินค้าก่อน แล้วค่อยกลับมาสั่งซื้อ</p>
       <Link
         href="/products"
-        className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-ember-600 px-8 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600"
+        className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-ember-600 px-8 font-display text-white hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 transition motion-safe:active:scale-98"
       >
         เลือกสินค้า
       </Link>

@@ -46,7 +46,7 @@ export default function AddToCart({ productId, productName }: Props) {
         <button
           type="button"
           onClick={handleAdd}
-          className={`h-11 min-w-0 flex-1 rounded-lg px-3 font-display text-base transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-600 ${
+          className={`h-11 min-w-0 flex-1 rounded-lg px-3 font-display text-base transition focus-visible:outline-2 motion-safe:active:scale-98 focus-visible:outline-offset-2 focus-visible:outline-forest-600 ${
             status === "added"
               ? "bg-forest-600 text-white hover:bg-forest-700"
               : "bg-sun-400 text-forest-950 hover:bg-sun-300"

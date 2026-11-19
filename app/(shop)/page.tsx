@@ -39,7 +39,7 @@ function HeroVisual({ images, shopName }: { images: string[]; shopName: string }
   const [main, small] = images;
   if (main) {
     return (
-      <div className={`relative mx-auto w-full max-w-sm md:max-w-md ${small ? "pb-12 sm:pb-16" : ""}`}>
+      <div className={`rise-in relative mx-auto w-full max-w-sm md:max-w-md ${small ? "pb-12 sm:pb-16" : ""}`}>
         <div className={`${frameClass} rotate-3`}>
           <div className="relative aspect-4/3 overflow-hidden rounded-md bg-forest-100">
             <Image
@@ -64,7 +64,7 @@ function HeroVisual({ images, shopName }: { images: string[]; shopName: string }
   }
 
   return (
-    <div aria-hidden="true" className="relative hidden h-80 md:block lg:h-96">
+    <div aria-hidden="true" className="rise-in relative hidden h-80 md:block lg:h-96">
       <div className={`${frameClass} absolute top-0 right-4 w-60 rotate-6 lg:w-72`}>
         <div className="relative aspect-4/5 overflow-hidden rounded-md">
           <ProductImagePlaceholder />
@@ -97,12 +97,12 @@ export default async function HomePage() {
             <div className="mt-8 flex items-center gap-4">
               <Link
                 href="/products"
-                className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-lg bg-ember-600 px-7 font-display text-lg text-white shadow-md shadow-forest-950/30 transition-colors hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:flex-none"
+                className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-lg bg-ember-600 px-7 font-display text-lg text-white shadow-md shadow-forest-950/30 transition hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:flex-none motion-safe:active:scale-98"
               >
                 สั่งซื้อน้ำแข็ง
                 <ArrowRightIcon className="size-5" />
               </Link>
-              <StarBadge>ส่งถึงที่!</StarBadge>
+              <StarBadge className="pop-in">ส่งถึงที่!</StarBadge>
             </div>
             <ul className="mt-10 grid max-w-md grid-cols-3 gap-3">
               {FEATURES.map(({ icon: Icon, label }) => (
@@ -143,7 +143,7 @@ export default async function HomePage() {
         <div className={`mt-10 ${shop.aboutImageUrl ? "grid gap-4 lg:grid-cols-5" : ""}`}>
           {/* รูปส่วนเกี่ยวกับร้าน (ถ้ามี): มือถือ/แท็บเล็ตอยู่บนการ์ด · จอใหญ่อยู่ซ้าย สูงเท่าการ์ด */}
           {shop.aboutImageUrl && (
-            <div className="relative aspect-4/3 overflow-hidden rounded-xl bg-stone-100 sm:aspect-video lg:col-span-2 lg:aspect-auto lg:min-h-80">
+            <div className="reveal relative aspect-4/3 overflow-hidden rounded-xl bg-stone-100 sm:aspect-video lg:col-span-2 lg:aspect-auto lg:min-h-80">
               <Image
                 src={shop.aboutImageUrl}
                 alt={`บรรยากาศร้าน ${shop.name}`}
@@ -162,7 +162,7 @@ export default async function HomePage() {
               const Icon = HIGHLIGHT_ICONS[i % HIGHLIGHT_ICONS.length];
               return (
                 // มือถือ: ไอคอนอยู่ซ้าย (การ์ดเตี้ยลง) / จอใหญ่: ไอคอนอยู่บน
-                <li key={item.title} className="flex gap-4 rounded-xl bg-stone-100 p-5 sm:block">
+                <li key={item.title} className="reveal flex gap-4 rounded-xl bg-stone-100 p-5 sm:block">
                   <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-forest-700 text-white">
                     <Icon className="size-6" />
                   </span>
@@ -191,13 +191,13 @@ export default async function HomePage() {
           />
           <div className="mt-8">
             <Suspense fallback={<ProductOrderListSkeleton />}>
-              <ProductOrderList headingLevel={3} />
+              <ProductOrderList headingLevel={3} animate />
             </Suspense>
           </div>
-          <div className="mt-8 flex justify-center">
+          <div className="reveal mt-8 flex justify-center">
             <Link
               href="/cart"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-sun-400 px-8 font-display text-lg text-forest-950 transition-colors hover:bg-sun-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-sun-400 px-8 font-display text-lg text-forest-950 transition hover:bg-sun-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-safe:active:scale-98"
             >
               ไปที่ตะกร้า
               <ArrowRightIcon className="size-5" />
@@ -216,15 +216,21 @@ export default async function HomePage() {
           description="สอบถามหรือสั่งซื้อทางโทรศัพท์และ LINE ได้เลย"
         />
         <div className="mt-8 space-y-3">
-          <ContactButtons />
-          <ShopInfoCards />
+          <div className="reveal">
+            <ContactButtons />
+          </div>
+          <div className="reveal">
+            <ShopInfoCards />
+          </div>
         </div>
 
-        <h3 id="home-map-heading" className="mt-12 font-display text-2xl text-forest-800 uppercase">
-          แผนที่ร้าน
-        </h3>
-        <div className="mt-3">
-          <ShopMap headingId="home-map-heading" />
+        <div className="reveal">
+          <h3 id="home-map-heading" className="mt-12 font-display text-2xl text-forest-800 uppercase">
+            แผนที่ร้าน
+          </h3>
+          <div className="mt-3">
+            <ShopMap headingId="home-map-heading" />
+          </div>
         </div>
 
         <Link

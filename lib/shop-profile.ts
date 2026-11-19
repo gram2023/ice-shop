@@ -35,8 +35,11 @@ export type ShopProfile = {
   openingHours: OpeningHour[];
   highlights: Highlight[];
   faq: FaqItem[];
+  /** รูปที่แอดมินอัปโหลด (เฉพาะรูปในที่เก็บรูปของ Supabase) null = ยังไม่มีรูป */
   logoUrl: string | null;
   heroImageUrl: string | null;
+  heroImage2Url: string | null;
+  aboutImageUrl: string | null;
   delivery: DeliveryRules;
 };
 
@@ -57,6 +60,8 @@ export const PROFILE_COLUMNS = [
   "faq",
   "logo_url",
   "hero_image_url",
+  "hero_image2_url",
+  "about_image_url",
   "delivery_lead_minutes",
   "delivery_max_days",
 ].join(", ");
@@ -86,6 +91,8 @@ export const DEFAULT_PROFILE: ShopProfile = {
   faq: shopConfig.faq,
   logoUrl: null,
   heroImageUrl: null,
+  heroImage2Url: null,
+  aboutImageUrl: null,
   delivery: {
     leadMinutes: shopConfig.orderRules.deliveryLeadMinutes,
     maxDays: shopConfig.orderRules.deliveryMaxDays,
@@ -113,6 +120,22 @@ function httpsUrl(value: unknown): string | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * ลิงก์รูปในที่เก็บรูปสาธารณะของ Supabase เท่านั้น (ตรงกับ images.remotePatterns ใน next.config.ts)
+ * ลิงก์อื่น → null เพราะ next/image จะ error ทั้งหน้าถ้าเจอรูปจากเว็บที่ไม่ได้อนุญาต
+ */
+export function storageImageUrl(value: unknown): string | null {
+  const s = httpsUrl(value);
+  if (!s) return null;
+  const url = new URL(s);
+  return url.hostname.endsWith(".supabase.co") &&
+    url.pathname.startsWith("/storage/v1/object/public/") &&
+    !url.username &&
+    !url.password
+    ? s
+    : null;
 }
 
 /** รายการ {a, b} ที่เป็นข้อความทั้งคู่ (ใช้กับ FAQ / จุดเด่น) */
@@ -178,8 +201,10 @@ export function mapProfileRow(row: Record<string, unknown> | null): ShopProfile 
     openingHours: hours.ok ? hours.data : d.openingHours,
     highlights: textPairs(r.highlights, "title", "detail", 80) ?? d.highlights,
     faq: textPairs(r.faq, "question", "answer", 200) ?? d.faq,
-    logoUrl: httpsUrl(r.logo_url),
-    heroImageUrl: httpsUrl(r.hero_image_url),
+    logoUrl: storageImageUrl(r.logo_url),
+    heroImageUrl: storageImageUrl(r.hero_image_url),
+    heroImage2Url: storageImageUrl(r.hero_image2_url),
+    aboutImageUrl: storageImageUrl(r.about_image_url),
     delivery: {
       leadMinutes: intInRange(r.delivery_lead_minutes, 0, 2880) ?? d.delivery.leadMinutes,
       maxDays: intInRange(r.delivery_max_days, 1, 30) ?? d.delivery.maxDays,

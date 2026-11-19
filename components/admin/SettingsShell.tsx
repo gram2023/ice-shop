@@ -13,12 +13,12 @@ export default function SettingsShell({ children }: { children: ReactNode }) {
   );
 }
 
-/** โหลดข้อมูลร้านไม่สำเร็จ (ส่วนใหญ่เพราะยังไม่ได้รัน phase6.sql) */
+/** โหลดข้อมูลร้านไม่สำเร็จ (ส่วนใหญ่เพราะยังไม่ได้รัน phase6.sql / ui3.sql) */
 export function ProfileLoadError() {
   return (
     <SectionMessage variant="error">
-      โหลดข้อมูลร้านไม่สำเร็จ ถ้าเพิ่งอัปเดตระบบ ตรวจสอบว่ารัน supabase/phase6.sql แล้ว
-      จากนั้นโหลดหน้าใหม่อีกครั้ง
+      โหลดข้อมูลร้านไม่สำเร็จ ถ้าเพิ่งอัปเดตระบบ ตรวจสอบว่ารัน supabase/phase6.sql และ
+      supabase/ui3.sql แล้ว จากนั้นโหลดหน้าใหม่อีกครั้ง
     </SectionMessage>
   );
 }

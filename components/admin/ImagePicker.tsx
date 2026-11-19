@@ -15,8 +15,8 @@ type Props = {
   hint?: string;
   currentUrl: string | null;
   error?: string;
-  /** QR: ย่อน้อยกว่าและคงไฟล์ PNG ไว้ให้คมชัด */
-  variant?: "photo" | "qr";
+  /** QR: ย่อน้อยกว่าและคงไฟล์ PNG ไว้ให้คมชัด / logo: คงไฟล์ PNG (พื้นใส) ย่อเหลือไม่เกิน 512px */
+  variant?: "photo" | "qr" | "logo";
   /** แจ้งฟอร์มแม่ว่ากำลังย่อรูปอยู่ (ให้ปิดปุ่มบันทึกชั่วคราว) */
   onBusyChange?: (busy: boolean) => void;
 };
@@ -65,7 +65,9 @@ export default function ImagePicker({
         file,
         variant === "qr"
           ? { maxDimension: 1200, quality: 0.92, keepPng: true }
-          : { maxDimension: 1600, quality: 0.85 },
+          : variant === "logo"
+            ? { maxDimension: 512, quality: 0.92, keepPng: true }
+            : { maxDimension: 1600, quality: 0.85 },
       );
       if (compressed.size > MAX_IMAGE_BYTES) {
         throw new Error("too large");

@@ -3,17 +3,19 @@
 import { refresh, updateTag } from "next/cache";
 import { isAdminRequest } from "@/lib/admin/auth";
 import { validateMapInput, type MapField } from "@/lib/admin/map-input";
-import { updateProfileColumns } from "@/lib/admin/profile";
+import { getProfileForAdmin, updateProfileColumns } from "@/lib/admin/profile";
 import {
   readShopInfoForm,
   validateShopInfo,
   type ShopInfoField,
 } from "@/lib/admin/shop-info-input";
+import { removeShopImage, uploadShopImage } from "@/lib/admin/storage";
+import { HOME_IMAGE_INFO, isHomeImageSlot } from "@/lib/home-images";
 import { validateOpeningHours } from "@/lib/opening-hours";
 import { SHOP_PROFILE_TAG } from "@/lib/shop-profile-server";
 
 /**
- * Server Action บันทึกข้อมูลร้าน (ข้อมูลร้าน / เวลาเปิด-ปิด / แผนที่)
+ * Server Action บันทึกข้อมูลร้าน (ข้อมูลร้าน / เวลาเปิด-ปิด / แผนที่ / รูปหน้าแรก)
  * ทุกตัวตรวจสิทธิ์แอดมินเองก่อน เพราะเรียกตรงด้วย POST ได้โดยไม่ผ่านหน้าเว็บ
  * บันทึกแล้วล้าง cache ข้อมูลร้าน → หน้าร้านเห็นข้อมูลใหม่ทันที
  */
@@ -27,7 +29,7 @@ export type ProfileFormState<F extends string = never> = {
 const NO_PERMISSION = "ไม่มีสิทธิ์ทำรายการนี้ กรุณาเข้าสู่ระบบใหม่";
 const CHECK_INPUT = "กรุณาตรวจสอบข้อมูลที่กรอกอีกครั้ง";
 const SAVE_FAILED =
-  "บันทึกไม่สำเร็จ กรุณาลองใหม่อีกครั้ง (ถ้าเพิ่งอัปเดตระบบ ตรวจสอบว่ารัน supabase/phase6.sql แล้ว)";
+  "บันทึกไม่สำเร็จ กรุณาลองใหม่อีกครั้ง (ถ้าเพิ่งอัปเดตระบบ ตรวจสอบว่ารัน supabase/phase6.sql และ ui3.sql แล้ว)";
 
 function fail<F extends string>(
   message: string,
@@ -115,4 +117,47 @@ export async function saveMap(
   if (!ok) return fail(SAVE_FAILED);
 
   return refreshAfterSave(checked.data.mapEmbedUrl ? "บันทึกแผนที่แล้ว" : "บันทึกแล้ว (ไม่แสดงแผนที่)");
+}
+
+/**
+ * รูปหน้าแรก/โลโก้ ทีละรูป (ฟอร์มละ 1 รูป เพื่อไม่ให้เกินขนาดที่รับได้ต่อครั้ง)
+ * - เลือกรูปใหม่ → อัปโหลด (server ตรวจชนิดไฟล์จากเนื้อไฟล์จริง) → บันทึก → ลบรูปเก่า
+ * - ติ๊ก "ลบรูปเดิม" → ล้างช่อง → ลบรูปเก่า
+ */
+export async function saveHomeImage(
+  _prev: ProfileFormState<"image">,
+  formData: FormData,
+): Promise<ProfileFormState<"image">> {
+  if (!(await isAdminRequest())) return fail(NO_PERMISSION);
+
+  const slot = formData.get("slot");
+  if (!isHomeImageSlot(slot)) return fail(CHECK_INPUT);
+  const info = HOME_IMAGE_INFO[slot];
+
+  const file = formData.get("image");
+  const hasFile = file instanceof File && file.size > 0;
+  if (!hasFile && formData.get("removeImage") !== "on") {
+    return fail("กรุณาเลือกรูป หรือติ๊ก “ลบรูปเดิม” ก่อนกดบันทึก");
+  }
+
+  const current = await getProfileForAdmin();
+  if (!current.ok) return fail(SAVE_FAILED);
+  const oldUrl = current.data.profile[info.profileKey];
+
+  let newUrl: string | null = null;
+  if (hasFile) {
+    const uploaded = await uploadShopImage(file, "branding");
+    if (!uploaded.ok) return fail("กรุณาตรวจสอบรูปอีกครั้ง", { image: uploaded.message });
+    newUrl = uploaded.url;
+  }
+
+  const ok = await updateProfileColumns({ [info.column]: newUrl }, "saveHomeImage");
+  if (!ok) {
+    if (newUrl) await removeShopImage(newUrl);
+    return fail(SAVE_FAILED);
+  }
+  // ลบไฟล์เก่า (ลบได้เฉพาะไฟล์ที่ระบบอัปโหลดไว้ในที่เก็บรูปของร้าน)
+  if (oldUrl && oldUrl !== newUrl) await removeShopImage(oldUrl);
+
+  return refreshAfterSave(newUrl ? `บันทึก${info.label}แล้ว` : `ลบ${info.label}แล้ว`);
 }

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { formatOpeningTime } from "@/lib/opening-hours";
 import { telHref } from "@/lib/shop-profile";
@@ -12,7 +13,13 @@ export default async function Footer() {
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2">
-            <IceIcon className="size-7 text-sun-400" />
+            {shop.logoUrl ? (
+              <span className="relative size-9 shrink-0 overflow-hidden rounded-lg bg-white">
+                <Image src={shop.logoUrl} alt="" fill sizes="36px" className="object-contain" />
+              </span>
+            ) : (
+              <IceIcon className="size-7 text-sun-400" />
+            )}
             <p className="font-display text-xl text-white uppercase">{shop.name}</p>
           </div>
           <p className="mt-2 text-sm leading-relaxed text-forest-200">{shop.tagline}</p>

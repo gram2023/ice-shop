@@ -32,17 +32,18 @@ const HIGHLIGHT_ICONS = [IceIcon, ClockIcon, TagIcon];
 const frameClass = "rounded-lg bg-white p-2 shadow-xl shadow-forest-950/30";
 
 /**
- * ภาพในส่วนหัว: รูปที่แอดมินอัปโหลด (กรอบขาววางเอียง)
+ * ภาพในส่วนหัว: รูปที่แอดมินอัปโหลด (กรอบขาววางเอียง รูปที่ 2 ซ้อนมุมซ้ายล่าง)
  * ยังไม่มีรูป → กรอบลายน้ำแข็งตกแต่ง เฉพาะจอใหญ่ (มือถือไม่แสดง หน้าจะได้สั้น)
  */
-function HeroVisual({ imageUrl, shopName }: { imageUrl: string | null; shopName: string }) {
-  if (imageUrl) {
+function HeroVisual({ images, shopName }: { images: string[]; shopName: string }) {
+  const [main, small] = images;
+  if (main) {
     return (
-      <div className="relative mx-auto w-full max-w-sm md:max-w-md">
+      <div className={`relative mx-auto w-full max-w-sm md:max-w-md ${small ? "pb-12 sm:pb-16" : ""}`}>
         <div className={`${frameClass} rotate-3`}>
           <div className="relative aspect-4/3 overflow-hidden rounded-md bg-forest-100">
             <Image
-              src={imageUrl}
+              src={main}
               alt={`ร้าน ${shopName}`}
               fill
               priority
@@ -51,6 +52,13 @@ function HeroVisual({ imageUrl, shopName }: { imageUrl: string | null; shopName:
             />
           </div>
         </div>
+        {small && (
+          <div className={`${frameClass} absolute bottom-0 -left-1 w-2/5 -rotate-6 sm:-left-6`}>
+            <div className="relative aspect-square overflow-hidden rounded-md bg-forest-100">
+              <Image src={small} alt="" fill sizes="(min-width: 768px) 180px, 40vw" className="object-cover" />
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -108,7 +116,10 @@ export default async function HomePage() {
               ))}
             </ul>
           </div>
-          <HeroVisual imageUrl={shop.heroImageUrl} shopName={shop.name} />
+          <HeroVisual
+            images={[shop.heroImageUrl, shop.heroImage2Url].filter((url): url is string => Boolean(url))}
+            shopName={shop.name}
+          />
         </div>
         <TornEdge className="absolute inset-x-0 bottom-0 h-4 text-white sm:h-6" />
       </section>
@@ -129,23 +140,41 @@ export default async function HomePage() {
           description={<span className="whitespace-pre-line">{shop.description}</span>}
           align="center"
         />
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {shop.highlights.map((item, i) => {
-            const Icon = HIGHLIGHT_ICONS[i % HIGHLIGHT_ICONS.length];
-            return (
-              // มือถือ: ไอคอนอยู่ซ้าย (การ์ดเตี้ยลง) / จอใหญ่: ไอคอนอยู่บน
-              <li key={item.title} className="flex gap-4 rounded-xl bg-stone-100 p-5 sm:block">
-                <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-forest-700 text-white">
-                  <Icon className="size-6" />
-                </span>
-                <div>
-                  <p className="font-display text-lg text-forest-800 uppercase sm:mt-4">{item.title}</p>
-                  <p className="mt-1 leading-relaxed text-slate-600">{item.detail}</p>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <div className={`mt-10 ${shop.aboutImageUrl ? "grid gap-4 lg:grid-cols-5" : ""}`}>
+          {/* รูปส่วนเกี่ยวกับร้าน (ถ้ามี): มือถือ/แท็บเล็ตอยู่บนการ์ด · จอใหญ่อยู่ซ้าย สูงเท่าการ์ด */}
+          {shop.aboutImageUrl && (
+            <div className="relative aspect-4/3 overflow-hidden rounded-xl bg-stone-100 sm:aspect-video lg:col-span-2 lg:aspect-auto lg:min-h-80">
+              <Image
+                src={shop.aboutImageUrl}
+                alt={`บรรยากาศร้าน ${shop.name}`}
+                fill
+                sizes="(min-width: 1024px) 460px, 100vw"
+                className="object-cover"
+              />
+            </div>
+          )}
+          <ul
+            className={`grid gap-4 sm:grid-cols-2 ${
+              shop.aboutImageUrl ? "lg:col-span-3 lg:grid-cols-1" : "lg:grid-cols-3"
+            }`}
+          >
+            {shop.highlights.map((item, i) => {
+              const Icon = HIGHLIGHT_ICONS[i % HIGHLIGHT_ICONS.length];
+              return (
+                // มือถือ: ไอคอนอยู่ซ้าย (การ์ดเตี้ยลง) / จอใหญ่: ไอคอนอยู่บน
+                <li key={item.title} className="flex gap-4 rounded-xl bg-stone-100 p-5 sm:block">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-forest-700 text-white">
+                    <Icon className="size-6" />
+                  </span>
+                  <div>
+                    <p className="font-display text-lg text-forest-800 uppercase sm:mt-4">{item.title}</p>
+                    <p className="mt-1 leading-relaxed text-slate-600">{item.detail}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </section>
 
       {/* สินค้า: เลือกจำนวนและใส่ตะกร้าได้จากหน้าแรกเลย */}

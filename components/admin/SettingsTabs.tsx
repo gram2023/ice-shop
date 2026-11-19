@@ -8,6 +8,7 @@ const TABS = [
   { href: "/admin/settings/shop", label: "ข้อมูลร้าน" },
   { href: "/admin/settings/hours", label: "เวลาเปิด-ปิด" },
   { href: "/admin/settings/map", label: "แผนที่" },
+  { href: "/admin/settings/images", label: "รูปหน้าแรก" },
 ];
 
 /** แท็บหมวดการตั้งค่าร้าน (มือถือเลื่อนซ้าย-ขวาได้) */

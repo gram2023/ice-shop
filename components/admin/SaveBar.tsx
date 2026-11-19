@@ -5,10 +5,12 @@ type Props = {
   saved: boolean;
   pending: boolean;
   label?: string;
+  /** กำลังย่อรูปในเบราว์เซอร์ (ปิดปุ่มชั่วคราว) */
+  busy?: boolean;
 };
 
 /** ท้ายฟอร์มตั้งค่า: ข้อความผลการบันทึก + ปุ่มบันทึก */
-export default function SaveBar({ message, saved, pending, label = "บันทึก" }: Props) {
+export default function SaveBar({ message, saved, pending, label = "บันทึก", busy = false }: Props) {
   return (
     <>
       {message && (
@@ -28,10 +30,10 @@ export default function SaveBar({ message, saved, pending, label = "บันท
       )}
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || busy}
         className="h-12 w-full rounded-full bg-blue-600 px-8 font-bold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-wait disabled:bg-blue-400 sm:w-auto"
       >
-        {pending ? "กำลังบันทึก…" : label}
+        {pending ? "กำลังบันทึก…" : busy ? "กำลังย่อรูป…" : label}
       </button>
     </>
   );
